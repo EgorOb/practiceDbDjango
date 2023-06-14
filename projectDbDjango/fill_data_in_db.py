@@ -171,6 +171,7 @@ if __name__ == "__main__":
     for entry in data_entry:
         blog = blogs.get(name=entry["blog"])
         author = authors.filter(name__in=entry["authors"])
+        # pub_date в моделях объявлен как DateField, поэтому на вход необходимо подавать объект datetime
         pub_date = date(*map(int, entry["pub_date"].split("-"))) if \
             entry["pub_date"] is not None else date.today()
         obj = Entry(blog=blog,
