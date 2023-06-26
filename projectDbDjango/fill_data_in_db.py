@@ -16,7 +16,9 @@ import os
 from json import load
 from django.core.exceptions import ValidationError
 from django.core.files import File
-from datetime import date
+from datetime import date, datetime
+import re
+from django.utils import timezone
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'projectDbDjango.settings')
 django.setup()
@@ -140,7 +142,7 @@ if __name__ == "__main__":
         author = Author.objects.get(name=data["author"])
         if data["avatar"] is not None:  # Из-за того, что avatar имеет значение
             # по умолчанию, то None не считается пустым для обработчика, поэтому
-            # приходится разделять на 2 случая, с и без параметрами avatar. Значение
+            # приходится разделять на 2 случая, с и без параметра avatar. Значение
             # по умолчанию подставляется когда параметр не передан, а NULL подставляется
             # (если в модели определили null=True) если был передан None
             obj = AuthorProfile(author=author,
@@ -168,12 +170,14 @@ if __name__ == "__main__":
     ## ______ Работа с объектами таблицы Entry __________
     blogs = Blog.objects.all()
     authors = Author.objects.all()
+    re_split = re.compile(r'[ :-]')
     for entry in data_entry:
         blog = blogs.get(name=entry["blog"])
         author = authors.filter(name__in=entry["authors"])
-        # pub_date в моделях объявлен как DateField, поэтому на вход необходимо подавать объект datetime
-        pub_date = date(*map(int, entry["pub_date"].split("-"))) if \
-            entry["pub_date"] is not None else date.today()
+        # pub_date в моделях объявлен как DateTimeField, поэтому на вход необходимо подавать объект datetime
+        pub_date = datetime(*map(int, re_split.split(entry["pub_date"]))) if \
+            entry["pub_date"] is not None else datetime.now()
+        pub_date = timezone.make_aware(pub_date)  # добавляем данных о часовом поясе, так как могут быть проблемы с БД и Django
         obj = Entry(blog=blog,
                     headline=entry["headline"],
                     body_text=entry["body_text"],
@@ -183,5 +187,5 @@ if __name__ == "__main__":
                     rating=entry["rating"] if entry["rating"] is not None else 0.0)
 
         check_obj_for_write_to_db(obj)
-        obj.authors.set(author) # Запись отнощение многое ко многому немного специфичная
+        obj.authors.set(author)  # Запись отнощение многое ко многому немного специфичная
         # необходимо сначала сохранить в БД, а затем установить значения отношений

@@ -1,5 +1,5 @@
 from django.db import models
-from datetime import date
+from datetime import date, datetime
 import hashlib
 import os
 from django.core.validators import RegexValidator
@@ -122,7 +122,7 @@ class Entry(models.Model):
         но блог (Blog) может иметь множество связанных записей блога (Entry))
     headline - заголовок
     body_text - текст статьи
-    pub_date - дата публикации записи
+    pub_date - дата и время публикации записи
     mod_date - дата редактирования записи
     authors - авторы написавшие данную статью (отношение "многие ко многим"
         (many-to-many). Один автор может сделать несколько записей в блог (Entry),
@@ -135,7 +135,7 @@ class Entry(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
     headline = models.CharField(max_length=255)
     body_text = models.TextField()
-    pub_date = models.DateField(default=date.today)
+    pub_date = models.DateTimeField(default=datetime.now)
     mod_date = models.DateField(auto_now=True)
     authors = models.ManyToManyField(Author)
     number_of_comments = models.IntegerField(default=0)
