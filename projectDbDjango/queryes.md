@@ -888,6 +888,8 @@ print(Author.objects.filter(entry__authors=None))
 Для отображаения характеристик запросов воспользуемся ```connection``` из ```django.db```. 
 ```connection.queries``` позволяют получить словарь, где содержится запрос в БД и время его выполнения
 
+Также можно использовать ```django-debug-toolbar``` или ```django-silk```
+
 Стандартный поиск:
 ```python
 from django.db import connection
