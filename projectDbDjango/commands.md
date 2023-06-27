@@ -1,5 +1,14 @@
 # Описание возможностей, по составлению запросов
 
+Существует 4 основных операции над объектом:
+
+* Создание элемента в БД (рассмотрено в fill_data_in_db.py)
+* Получение элемента из БД
+* Изменение элемента в БД (рассмотрено в update_delete.md)
+* Удаление элемента в БД (рассмотрено в update_delete.md)
+
+## Получение элементов
+
 ## Поиск по полю
 
 Поиск по полю - это то, как вы определяете содержание предложения SQL WHERE.
@@ -433,8 +442,8 @@ print(Blog.objects.filter(id__gte=2))  # Вывод всех строк табл
 Аналогично фильтру, только противоположность. Возвращает новый QuerySet, содержащий объекты, которые не соответствуют 
 указанным параметрам поиска.
 ```python
-print(Blog.objects.exclude(id__gte=2))  # Вывод всех строк таблицы Blog у которых значение id >= 2. 
-# Рассмотрение поиска по полям далее
+print(Blog.objects.exclude(id__gte=2))  # Вывод всех строк таблицы Blog кроме тех у которых значение id >= 2.
+#  <QuerySet [<Blog: Путешествия по миру>]>
 ```
 
 ### exists()
@@ -659,7 +668,7 @@ print(calc_rating)  # {'std_rating': 1.6577092628081682, 'var_rating': 2.748}
 ```python
 from django.db.models import Sum
 
-# Вычислить сумму комментариев в статьях
+# Вычислить общее число комментариев в БД
 calc_rating = Entry.objects.aggregate(
     sum_comments=Sum('number_of_comments')
 )
@@ -762,6 +771,8 @@ print(Blog.objects.values_list('id', 'name'))  # Обратите внимани
 ```
 
 ### union(), intersection(), difference()
+
+#### union()
 ```union()``` использует оператор SQL UNION для объединения результатов двух или более QuerySet’ов
 
 Применение оператора ```union()``` к нескольким QuerySets в данном формате позволяет выполнять операцию объединения в цепочке, 
@@ -822,6 +833,7 @@ print(Entry.objects.filter(blog__name__in=['Путешествия по миру
 ]>
 """
 ```
+#### intersection()
 ```intersection()``` использует оператор SQL INTERSECT для возврата общих элементов двух или более QuerySet’ов.
 
 Применение оператора ```intersection()``` к нескольким QuerySets позволяет найти пересечение записей между ними.  Например:
@@ -841,6 +853,7 @@ result_qs = blog_a_entries.intersection(blog_b_entries, blog_c_entries)
 print(result_qs)
 # <QuerySet [{'authors': 1}, {'authors': 9}, {'authors': 20}]>
 ```
+#### difference()
 ```difference()``` использует оператор SQL EXCEPT для хранения только элементов, присутствующих в QuerySet, 
 но не в каких-либо других QuerySet’ах. Например:
 ```python
@@ -870,25 +883,97 @@ print(Author.objects.filter(entry__authors=None))
 производительности, которое приводит к одному более сложному запросу, но означает, 
 что дальнейшее использование отношений внешнего ключа не потребует запросов к базе данных.
 
-Следующие примеры иллюстрируют разницу между простыми поисками и с использованием select_related(). 
-Вот стандартный поиск:
-```python
-# Hits the database.
-e = Entry.objects.get(id=5)
+Следующие примеры иллюстрируют разницу между простыми поисками и с использованием ```select_related()```.
 
-# Hits the database again to get the related Blog object.
-b = e.blog
+Для отображаения характеристик запросов воспользуемся ```connection``` из ```django.db```. 
+```connection.queries``` позволяют получить словарь, где содержится запрос в БД и время его выполнения
+
+Стандартный поиск:
+```python
+from django.db import connection
+
+print("Число запросов = ", len(connection.queries), " Запросы = ", connection.queries)
+"""
+Число запросов =  0  Запросы =  []
+"""
+entry = Entry.objects.get(id=5)
+print("Число запросов = ", len(connection.queries), " Запросы = ", connection.queries)
+"""
+Число запросов =  1  Запросы =  [...]
+"""
+blog = entry.blog
+print("Число запросов = ", len(connection.queries), " Запросы = ", connection.queries)
+"""
+Число запросов =  2  Запросы =  [...,...]
+"""
+print('Результат запроса = ', blog)
+"""
+Результат запроса =  Путешествия по миру
+"""
 ```
+Пример с select_related
 ```python
-# Hits the database.
-e = Entry.objects.select_related('blog').get(id=5)
+from django.db import connection
 
-# Doesn't hit the database, because e.blog has been prepopulated
-# in the previous query.
-b = e.blog
+print("Число запросов = ", len(connection.queries), " Запросы = ", connection.queries)
+"""
+Число запросов =  0  Запросы =  []
+"""
+entry = Entry.objects.select_related('blog').get(id=5)
+print("Число запросов = ", len(connection.queries), " Запросы = ", connection.queries)
+"""
+Число запросов =  1  Запросы =  [...]
+"""
+blog = entry.blog
+print("Число запросов = ", len(connection.queries), " Запросы = ", connection.queries)
+"""
+Число запросов =  1  Запросы =  [...,...]
+"""
+print('Результат запроса = ', blog)
+"""
+Результат запроса =  Путешествия по миру
+    """
 ```
 Вы можете ссылаться на любое отношение ForeignKey или OneToOneField в списке полей, 
-передаваемых в select_related().
+передаваемых в ```select_related()```.
+
+Как видно, ```select_related()``` позволил уменьшить число запросов, так как при первом запросе подтянул данные из связанных полей.
+Если в select_related ничего не передать, то будут загружены все отношения, однако только для первого уровня вложенности.
+
+В Django вы можете прописать select_related для отношений более чем двух уровней вложенности, используя точечную нотацию.
+
+Предположим, у вас есть следующие модели с вложенными отношениями:
+
+```python
+class ModelA(models.Model):
+    # Поля модели
+
+class ModelB(models.Model):
+    model_a = models.ForeignKey(ModelA, on_delete=models.CASCADE)
+    # Поля модели
+
+class ModelC(models.Model):
+    model_b = models.ForeignKey(ModelB, on_delete=models.CASCADE)
+    # Поля модели
+
+class ModelD(models.Model):
+    model_c = models.ForeignKey(ModelC, on_delete=models.CASCADE)
+    # Поля модели
+```
+
+Если вы хотите выполнить запрос, включающий все связанные объекты ModelB, ModelC и ModelD, вы можете использовать ```select_related``` следующим образом:
+
+```python
+result = ModelA.objects.select_related('modelb', 'modelb__modelc', 'modelb__modelc__modeld').get(id=1)
+```
+В этом примере мы используем точечную нотацию, чтобы указать все связанные модели, начиная с ModelB, затем ModelC и, наконец, ModelD.
+
+Таким образом, когда вы получаете объект ModelA, все связанные объекты ModelB, ModelC и ModelD будут предварительно 
+загружены с использованием одного SQL-запроса, вместо нескольких отдельных запросов для каждой модели.
+
+Однако помните, что использование ```select_related``` для отношений с большим количеством уровней вложенности ```может привести 
+к выполнению сложных JOIN-запросов и загрузке большого объема данных```, поэтому имейте в виду о потенциальных проблемах 
+с производительностью.
 
 ### prefetch_related()
 Возвращает ```QuerySet```, который автоматически извлекает в одном пакете связанные 
@@ -905,7 +990,7 @@ b = e.blog
 результате объединения через отношение „many“, ```select_related``` ограничен 
 однозначными отношениями - внешним ключом и один-к-одному.
 
-Например, предположим, у вас есть эти модели:
+Например(теоретическая часть), предположим, у вас есть эти модели:
 
 ```python
 from django.db import models
@@ -926,29 +1011,425 @@ class Pizza(models.Model):
 >>> Pizza.objects.all()
 ["Hawaiian (ham, pineapple)", "Seafood (prawns, smoked salmon)"...
 ```
-Проблема в том, что каждый раз, когда Pizza.str() запрашивает self.toppings.all(), он должен запросить базу данных, поэтому Pizza.objects.all() выполнит запрос к таблице Toppings для каждого элемента в Pizza QuerySet.
+Проблема в том, что каждый раз, когда Pizza.str() запрашивает self.toppings.all(), он должен запросить базу данных, 
+поэтому Pizza.objects.all() выполнит запрос к таблице Toppings для каждого элемента в Pizza QuerySet.
 
 Мы можем сократить до двух запросов, используя ```prefetch_related```:
 ```python
 Pizza.objects.prefetch_related('toppings')
 ```
+Пример c блогом (который можно повторить, так как используется текущая БД) - вывести всех авторов всех статей
+```python
+from django.db import connection
+
+print("Число запросов = ", len(connection.queries), " Запросы = ", connection.queries)
+"""
+Число запросов =  0  Запросы =  []
+"""
+entry = Entry.objects.all()
+print("Число запросов = ", len(connection.queries), " Запросы = ", connection.queries)
+"""
+Число запросов =  0  Запросы =  [], ввиду ленивости QuerySet
+"""
+for row in entry:
+    authors = [author.name for author in row.authors.all()]
+    print("Число запросов = ", len(connection.queries), " Запросы = ", connection.queries)
+    print('Результат запроса = ', authors)
+"""
+Число запросов =  26 Запросы = [...]
+"""
+```
+Тот же пример, но с ```prefetch_related```
+```python
+from django.db import connection
+
+print("Число запросов = ", len(connection.queries), " Запросы = ", connection.queries)
+"""
+Число запросов =  0  Запросы =  []
+"""
+entry = Entry.objects.prefetch_related("authors")
+print("Число запросов = ", len(connection.queries), " Запросы = ", connection.queries)
+"""
+Число запросов =  0  Запросы =  [], ввиду ленивости QuerySet
+"""
+for row in entry:
+    authors = [author.name for author in row.authors.all()]
+    print("Число запросов = ", len(connection.queries), " Запросы = ", connection.queries)
+    print('Результат запроса = ', authors)
+"""
+Число запросов =  2 Запросы = [...]
+"""
+```
+В этом примере мы используем ```prefetch_related('authors')```, чтобы загрузить все связанные авторы для каждой записи 
+блога ```Entry``` заранее. Затем мы можем получить доступ к связанным авторам для каждой записи блога, используя атрибут ```authors```, как обычно.
+
+Важно отметить, что ```prefetch_related()``` выполняет дополнительный запрос к базе данных, чтобы предварительно загрузить 
+связанные объекты. Однако, это обычно более эффективный подход, особенно когда у вас есть множество записей блога и 
+связанных авторов, иначе каждая итерация по ```entry.authors.all()``` приведет к отдельному запросу к базе данных для 
+получения связанных авторов для каждой записи блога. 
+
+```prefetch_related()``` позволяет сократить количество запросов и улучшить производительность при доступе к связанным объектам.
 
 ## Дополнительный функционал позволяющий создавать сложные запросы
 
 ### F выражения
+Объект F() представляет значение поля модели, преобразованное значение поля модели или аннотированный столбец. 
+Он позволяет ссылаться на значения полей модели и выполнять операции с базой данных, ```используя их без необходимости 
+извлекать их из базы данных в память Python```.
+
+Пример
+
+```python
+from django.db.models import F
+
+"""
+Вывести статьи где число комментариев на сайте больше числа комментариев на сторонних ресурсах
+"""
+print(Entry.objects.filter(number_of_comments__gt=F('number_of_pingbacks')).values('id',
+                                                                                   'number_of_comments',
+                                                                                   'number_of_pingbacks'))
+"""
+<QuerySet [
+{'id': 3, 'number_of_comments': 7, 'number_of_pingbacks': 5}, 
+{'id': 5, 'number_of_comments': 4, 'number_of_pingbacks': 0}, 
+{'id': 6, 'number_of_comments': 10, 'number_of_pingbacks': 0}, 
+{'id': 15, 'number_of_comments': 5, 'number_of_pingbacks': 4}, 
+{'id': 18, 'number_of_comments': 20, 'number_of_pingbacks': 1},
+{'id': 19, 'number_of_comments': 12, 'number_of_pingbacks': 6}
+]>
+"""
+
+"""
+С аннотациями можно создать новый столбец с вычислением определенных характеристик
+"""
+print(Entry.objects.annotate(sum_number=F('number_of_pingbacks') + F('number_of_comments')).values('id',
+                                                                                                   'number_of_comments',
+                                                                                                   'number_of_pingbacks',
+                                                                                                   'sum_number'))
+"""
+<QuerySet [
+{'id': 1, 'number_of_comments': 2, 'number_of_pingbacks': 10, 'sum_number': 12}, 
+{'id': 2, 'number_of_comments': 14, 'number_of_pingbacks': 30, 'sum_number': 44},
+...
+]>
+"""
+
+"""
+Или с alias для дальнейшего использования
+"""
+print(Entry.objects.alias(sum_number=F('number_of_pingbacks') + F('number_of_comments')).
+      annotate(val1=F('sum_number') / F('number_of_comments')).values('id',
+                                                                      'number_of_comments',
+                                                                      'number_of_pingbacks',
+                                                                      'val1'))
+"""
+<QuerySet [
+{'id': 1, 'number_of_comments': 2, 'number_of_pingbacks': 10, 'val1': 6}, 
+{'id': 2, 'number_of_comments': 14, 'number_of_pingbacks': 30, 'val1': 3}, 
+{'id': 3, 'number_of_comments': 7, 'number_of_pingbacks': 5, 'val1': 1}, 
+{'id': 4, 'number_of_comments': 2, 'number_of_pingbacks': 5, 'val1': 3}, 
+...
+]>
+"""
+# Можно заметить, что расчёт не до конца правильный, всё приведено к типу int,
+# так как что annotate, что alias не способны управлять типом полей, для этого есть другие функции например
+# aggregate, ExpressionWrapper
+```
 
 ### Q объекты
+Объект ```Q()``` представляет собой условие SQL, которое может быть использовано в операциях, связанных с базой данных. 
+Это похоже на то, как объект ```F()``` представляет значение поля модели или аннотации. 
+Они позволяют определять и повторно использовать условия и объединять их с помощью таких операторов, как ```| (OR)```, ```& (AND)``` и ```^ (XOR)```
+
+```python
+from django.db.models import Q
+
+# Получение всех записей, у которых заголовок содержит 'ключевое слово' или текст содержит 'определенное слово'
+entries = Entry.objects.filter(
+    Q(headline__icontains='тайны') | Q(body_text__icontains='город'))
+print(entries)
+"""
+<QuerySet [
+<Entry: Изучение красот Мачу-Пикчу>, 
+<Entry: Знакомство с Парижем>, 
+<Entry: Открывая тайны Колизея>
+]>
+"""
+
+from datetime import date
+# Получение записей блога "Путешествия по миру" с датами публикаций между 1 мая 2022 и 1 мая 2023
+entries = Entry.objects.filter(
+    Q(blog__name='Путешествия по миру') & Q(pub_date__date__range=(date(2022, 5, 1), date(2023, 5, 1))))
+print(entries)
+"""
+<QuerySet [
+<Entry: Приключения в Амазонке>, 
+<Entry: Знакомство с Парижем>, 
+<Entry: Открывая тайны Колизея>, 
+<Entry: Оазисы Сахары: красота и опасность>
+]>
+"""
+
+# Получить статьи, у которых либо имеется оценка больше 4, либо число комментариев меньше 10 (используя XOR)
+entries = Entry.objects.filter(Q(rating__gt=4) ^ Q(number_of_comments__lt=10))
+print(entries)
+"""
+<QuerySet [
+<Entry: Изучение красот Мачу-Пикчу>, 
+<Entry: Приключения в Амазонке>, 
+<Entry: Открывая тайны Колизея>, 
+<Entry: Оазисы Сахары: красота и опасность>, 
+<Entry: Приготовление собственного хлеба>, 
+<Entry: Здоровое питание: полезные рецепты>, 
+<Entry: Топ-10 фитнес-тренеров для вдохновения>, 
+<Entry: Инновации в области виртуальной реальности>, 
+<Entry: Как создать стильный образ на каждый день>, 
+<Entry: История моды: от ретро до современности>, 
+<Entry: Уход за кожей и волосами: лучшие советы>, 
+<Entry: Интервью с известными модельерами и дизайнерами>
+]>
+"""
+```
+В последнем примере оператор XOR (^) отличается от оператора OR (|) в том, что XOR требует, 
+чтобы только одно из условий было истинным, тогда как OR допускает, чтобы оба условия были истинными.
+
+Предположим, у нас есть два условия:
+
+* ```Q(rating__gt=4)``` - оценка больше 4.
+* ```Q(number_of_comments__lt=10)``` - число комментариев меньше 10.
+
+Если мы используем оператор ```OR (|)```, то статьи будут выбраны, если хотя бы одно из условий истинно. 
+То есть, статьи с оценкой больше 4 и с числом комментариев меньше 10 будут выбраны.
+
+Однако, если мы используем оператор ```XOR (^)```, то статьи будут выбраны, только если одно из условий истинно, 
+```но не оба одновременно```. То есть, статьи с оценкой больше 4 или статьи с числом комментариев меньше 10 будут выбраны, 
+но не статьи, у которых и оценка больше 4, и число комментариев меньше 10.
+
+В контексте данного примера и результата выборки, использование ```XOR``` или ```OR``` может дать разные результаты в 
+зависимости от ваших конкретных данных и требований. Если вам нужно выбрать только статьи, которые соответствуют одному 
+из условий, но не обоим одновременно, то оператор ```XOR (^)``` подходит. 
+Если же вам нужно выбрать статьи, которые соответствуют хотя бы одному из условий, без требования исключения обоих условий, 
+то оператор ```OR (|)``` может быть более подходящим выбором.
 
 ### ExpressionWrapper()
 
-### Case
+ExpressionWrapper окружает другое выражение и предоставляет доступ к свойствам, таким как ```output_field```, которые могут 
+быть недоступны для других выражений. ```ExpressionWrapper``` необходим при использовании арифметики на выражениях F() с различными типами
 
-### When
+```class ExpressionWrapper(expression, output_field)```
 
-### With
+### Case, When, Value
+Модуль ```Case``` позволяет создавать условные выражения в запросах, аналогично оператору CASE в SQL. 
+Он может быть использован для выполнения разных действий в зависимости от значений полей.
+
+Модуль ```When``` в Django используется вместе с модулем Case для создания условных выражений в запросах. 
+Он позволяет определить условие и значение, которое должно быть возвращено, если условие выполняется.
+
+```Value``` - это выражение, которое позволяет явно указать значение для определенного поля или атрибута модели. 
+Оно полезно в тех случаях, когда вы хотите явно задать определенное значение в запросе или аннотации, вместо получения 
+его из базы данных или другого источника данных.
+
+В Django ORM также есть возможность передавать значения напрямую без использования Value. 
+Во многих случаях это сработает и будет иметь тот же эффект.
+
+```python
+from django.db.models import Case, When, BooleanField, CharField
+
+# Получение всех записей с полем is_popular, которое равно True, если значение поля rating больше равно 4, иначе False
+entries = Entry.objects.annotate(
+    is_popular=Case(
+        When(rating__gte=4, then=True),
+        default=False,
+        output_field=BooleanField()
+    )
+).values('id', 'rating', 'is_popular')
+print(entries)
+"""
+<QuerySet [
+{'id': 1, 'rating': 0.0, 'is_popular': False}, 
+{'id': 2, 'rating': 5.0, 'is_popular': True}, 
+{'id': 3, 'rating': 4.7, 'is_popular': True}, 
+{'id': 4, 'rating': 3.3, 'is_popular': False}, 
+{'id': 5, 'rating': 3.4, 'is_popular': False},
+...
+]>
+"""
+
+from django.db.models import Count, Value
+# Создание описательной метки для числа авторов в статье
+entries = Entry.objects.annotate(
+    count_author=Count("authors"),
+    author_label=Case(
+        When(count_author__gte=3, then=Value('Много')),
+        When(count_author=2, then=Value('Средне')),
+        default=Value('Мало'),
+        output_field=CharField()
+    )
+).values('id', 'count_author', 'author_label')
+print(entries)
+"""
+<QuerySet [
+{'id': 1, 'count_author': 2, 'author_label': 'Средне'}, 
+{'id': 2, 'count_author': 1, 'author_label': 'Мало'}, 
+{'id': 3, 'count_author': 3, 'author_label': 'Много'}, 
+{'id': 4, 'count_author': 2, 'author_label': 'Средне'}, 
+{'id': 5, 'count_author': 3, 'author_label': 'Много'},
+...
+]>
+"""
+```
+В приведенном примере мы используем Case, чтобы определить поле author_label, которое зависит от значения поля count_author.
+
+В нижнем примере без использования Value() не передать строковое значение, так как Django пытается связать с полями в БД.
 
 ### Subquery()
+Вы можете добавить явный подзапрос к QuerySet с помощью выражения Subquery
+
+```class Subquery(queryset, output_field=None)```
+
+Subquery (подзапрос) в контексте базы данных и Django ORM представляет собой запрос, который выполняется внутри другого запроса. 
+Он используется для получения данных из одной таблицы или запроса и использования их в другом запросе.
+
+Subquery может быть полезным в следующих случаях:
+
+* Фильтрация: Вы можете использовать Subquery для фильтрации записей основного запроса на основе результатов другого запроса. 
+Например, вы можете получить список ID записей из одной таблицы и использовать их в фильтрации другой таблицы.
+* Аннотация: Subquery может использоваться для аннотации значений в основном запросе на основе результатов другого запроса. 
+Например, вы можете аннотировать каждую запись с количеством связанных записей из другой таблицы.
+* Сортировка: Subquery может быть использован для сортировки записей основного запроса на основе результатов другого запроса.
+Например, вы можете отсортировать записи по значению, вычисленному в другом запросе.
+* Ограничение (Limit): Subquery может использоваться для ограничения количества записей основного запроса на основе результатов другого запроса.
+Например, вы можете ограничить основной запрос только теми записями, которые присутствуют в другом запросе.
+
+Пример
+
+```python
+from django.db.models import Subquery
+
+# Получаем список ID авторов без биографии
+subquery = AuthorProfile.objects.filter(bio__isnull=True).values('author_id')
+
+# Фильтруем записи блога по авторам
+query = Entry.objects.filter(authors__in=Subquery(subquery))
+print(query)
+"""
+<QuerySet [
+<Entry: Знакомство с Парижем>, 
+<Entry: Инновации в области виртуальной реальности>, 
+<Entry: Тенденции моды на текущий сезон>, 
+<Entry: Открывая тайны Колизея>, 
+<Entry: Топ-10 фитнес-тренеров для вдохновения>, 
+<Entry: Приключения в Амазонке>, 
+<Entry: Рецепты блюд из итальянской кухни>, 
+<Entry: Как правильно заниматься йогой>
+]>
+"""
+# Аналогично можно подключиться так, так как есть непрямая связь между Author и AuthorProfile через первичный ключ
+print(Entry.objects.filter(authors__authorprofile__bio__isnull=True))
+"""
+<QuerySet [
+<Entry: Приключения в Амазонке>, 
+<Entry: Знакомство с Парижем>, 
+<Entry: Открывая тайны Колизея>, 
+<Entry: Рецепты блюд из итальянской кухни>, 
+<Entry: Топ-10 фитнес-тренеров для вдохновения>, 
+<Entry: Как правильно заниматься йогой>, 
+<Entry: Инновации в области виртуальной реальности>, 
+<Entry: Тенденции моды на текущий сезон>]>
+"""
+```
+Subquery удобен тогда когда его ещё раз необходимо обработать в другом месте
 
 ### Необработанные выражения SQL
+Иногда выражения базы данных не могут легко выразить сложное предложение WHERE. В этих крайних случаях используйте выражение RawSQL
 
-### Функции окна
+```python
+from django.db import connection
+
+# Составляем SQL-запрос
+sql = """
+SELECT id, headline
+FROM db_entry
+WHERE headline LIKE '%%тайны%%' OR body_text LIKE '%%город%%'
+"""
+
+# Выполняем запрос
+with connection.cursor() as cursor:
+    cursor.execute(sql)
+    results = cursor.fetchall()
+
+# Выводим результаты
+for result in results:
+    print(result)
+"""
+(1, 'Изучение красот Мачу-Пикчу')
+(3, 'Знакомство с Парижем')
+(4, 'Открывая тайны Колизея')
+"""
+```
+Также можно вызвать метод ```raw()``` и передать туда параметры.
+```python
+# Выполняем сырой SQL-запрос
+results = Entry.objects.raw(
+    """
+    SELECT id, headline
+    FROM db_entry
+    WHERE headline LIKE '%%тайны%%' OR body_text LIKE '%%город%%'
+    """
+)
+
+# Выводим результаты
+for result in results:
+    print(result.id, result.headline)
+"""
+1 Изучение красот Мачу-Пикчу
+3 Знакомство с Парижем
+4 Открывая тайны Колизея
+"""
+```
+
+### Оконные функции
+Оконные функции обеспечивают возможность применения функций на разделах. 
+В отличие от обычной агрегатной функции, которая вычисляет конечный результат для каждого набора, определенного группой, 
+оконные функции работают над frames и разделами и ```вычисляют результат для каждой строки```.
+
+```class Window(expression, partition_by=None, order_by=None, frame=None, output_field=None)```
+
+```python
+from django.db.models import F, Window, Avg, Max, Min
+
+# Получаем queryset статей блога с аннотациями, используя оконные функции
+queryset = Entry.objects.annotate(
+    avg_comments=Window(
+        expression=Avg('number_of_comments'),
+        partition_by=F('blog'),
+    ),
+    max_comments=Window(
+        expression=Max('number_of_comments'),
+        partition_by=F('blog'),
+    ),
+    min_comments=Window(
+        expression=Min('number_of_comments'),
+        partition_by=F('blog'),
+    ),
+
+).values('id', 'headline', 'avg_comments', 'max_comments', 'min_comments')
+print(queryset)
+"""
+<QuerySet [
+{'id': 1, 'headline': 'Изучение красот Мачу-Пикчу', 'avg_comments': 5.8, 'max_comments': 14, 'min_comments': 2}, 
+{'id': 2, 'headline': 'Приключения в Амазонке', 'avg_comments': 5.8, 'max_comments': 14, 'min_comments': 2}, 
+{'id': 3, 'headline': 'Знакомство с Парижем', 'avg_comments': 5.8, 'max_comments': 14, 'min_comments': 2}, 
+{'id': 4, 'headline': 'Открывая тайны Колизея', 'avg_comments': 5.8, 'max_comments': 14, 'min_comments': 2}, 
+{'id': 5, 'headline': 'Оазисы Сахары: красота и опасность', 'avg_comments': 5.8, 'max_comments': 14, 'min_comments': 2}, 
+{'id': 6, 'headline': 'Рецепты блюд из итальянской кухни', 'avg_comments': 5.6, 'max_comments': 10, 'min_comments': 2}, 
+{'id': 7, 'headline': 'Приготовление собственного хлеба', 'avg_comments': 5.6, 'max_comments': 10, 'min_comments': 2}, 
+{'id': 8, 'headline': 'Экзотические специи и их использование', 'avg_comments': 5.6, 'max_comments': 10, 'min_comments': 2},
+{'id': 9, 'headline': 'Десерты для настоящих сладкоежек', 'avg_comments': 5.6, 'max_comments': 10, 'min_comments': 2}, 
+{'id': 10, 'headline': 'Гастрономическое путешествие по Франции', 'avg_comments': 5.6, 'max_comments': 10, 'min_comments': 2},
+{'id': 11, 'headline': 'Упражнения для поддержания физической формы', 'avg_comments': 3.0, 'max_comments': 7, 'min_comments': 0}, 
+{'id': 12, 'headline': 'Здоровое питание: полезные рецепты', 'avg_comments': 3.0, 'max_comments': 7, 'min_comments': 0}, 
+...
+]>
+"""
+```
