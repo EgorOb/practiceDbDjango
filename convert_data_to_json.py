@@ -579,11 +579,11 @@ data_entry = [
 if __name__ == "__main__":
     from json import dump
 
-    with open("blogs.json", "w", encoding="utf-8") as f:
+    with open("data/blogs.json", "w", encoding="utf-8") as f:
         dump(data_blog, f, ensure_ascii=False, indent=4)
-    with open("authors.json", "w", encoding="utf-8") as f:
+    with open("data/authors.json", "w", encoding="utf-8") as f:
         dump(data_author, f, ensure_ascii=False, indent=4)
-    with open("authors_profile.json", "w", encoding="utf-8") as f:
+    with open("data/authors_profile.json", "w", encoding="utf-8") as f:
         dump(data_author_profile, f, ensure_ascii=False, indent=4)
-    with open("entrys.json", "w", encoding="utf-8") as f:
+    with open("data/entrys.json", "w", encoding="utf-8") as f:
         dump(data_entry, f, ensure_ascii=False, indent=4)

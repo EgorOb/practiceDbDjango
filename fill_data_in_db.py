@@ -20,20 +20,20 @@ from datetime import date, datetime
 import re
 from django.utils import timezone
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'projectDbDjango.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 django.setup()
 
-with open("blogs.json", encoding="utf-8") as f:
+with open("data/blogs.json", encoding="utf-8") as f:
     data_blog = load(f)
-with open("authors.json", encoding="utf-8") as f:
+with open("data/authors.json", encoding="utf-8") as f:
     data_author = load(f)
-with open("authors_profile.json", encoding="utf-8") as f:
+with open("data/authors_profile.json", encoding="utf-8") as f:
     data_author_profile = load(f)
-with open("entrys.json", encoding="utf-8") as f:
+with open("data/entrys.json", encoding="utf-8") as f:
     data_entry = load(f)
 
 if __name__ == "__main__":
-    from db.models import Blog, Author, AuthorProfile, Entry
+    from app.models import Blog, Author, AuthorProfile, Entry
 
     # ______Работа с объектами таблицы Blog__________
     """Пример записи в БД с последующим сохранением"""
