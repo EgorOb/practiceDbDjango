@@ -16,11 +16,15 @@ class Blog(models.Model):
     name - название блога
     tagline - используется для хранения краткого описания или слогана блога
     """
-    name = models.CharField(max_length=100, unique=True)
-    tagline = models.TextField()
+    name = models.CharField(max_length=100, unique=True, verbose_name="Название")
+    tagline = models.TextField(verbose_name="Слоган")
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = "Блог"
+        verbose_name_plural = "Блоги"
 
 
 class Author(models.Model):
@@ -30,11 +34,15 @@ class Author(models.Model):
     email - адрес электронной почты автора
     """
 
-    name = models.CharField(max_length=200)
-    email = models.EmailField(unique=True)
+    name = models.CharField(max_length=200, verbose_name="Имя")
+    email = models.EmailField(unique=True, verbose_name="Почта")
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = "Автор"
+        verbose_name_plural = "Авторы"
 
 
 def hashed_upload_path(instance, filename):
@@ -52,18 +60,18 @@ def hashed_upload_path(instance, filename):
     new_filename = f"{instance.author.name}_{file_hash}{ext}"
 
     # Возвращаем полный путь сохранения
-    return os.path.join("media", "avatars", new_filename)
+    return os.path.join("avatars", new_filename)
 
 
 class AuthorProfile(models.Model):
     """
-    Дополнительная информация к профилю, было создано чтобы показать, как можно
+    Дополнительная информация к профилю, было создано, чтобы показать, как можно
     расширить какую-то модель за счёт использования отношения
     один к одному(OneToOneField).
     author - связь с таблицей автор (один к одному(у автора может быть только один профиль,
     соответственно профиль принадлежит определенному автору))
     bio - текст о себе
-    avatar - картинка профиля. Стоят задачи(просто чтобы показать как это можно решить):
+    avatar - картинка профиля. Стоят задачи(просто, чтобы показать как это можно решить):
         1. При сохранении необходимо переименовать картинку по шаблону user_hash
         2. Необходимо все передаваемые картинки для аватара приводить к размеру 200х200
     phone_number - номер телефона с валидацией при внесении
@@ -74,7 +82,7 @@ class AuthorProfile(models.Model):
                            help_text="Короткая биография",
                            )
     avatar = models.ImageField(upload_to=hashed_upload_path,
-                               default='media/avatars/unnamed.png',
+                               default='avatars/unnamed.png',
                                null=True,
                                blank=True)
     phone_regex = RegexValidator(

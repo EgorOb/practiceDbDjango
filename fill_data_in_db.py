@@ -56,7 +56,7 @@ if __name__ == "__main__":
     к записи, а не сырые данные."""
     data_for_write = [Author(**data) for data in data_author[:10]] # Здесь
     # просто создались объекты, записи в БД не было
-    Author.objects.bulk_create(data_for_write) # А здесь произошла пакетная запись в БД
+    Author.objects.bulk_create(data_for_write)  # А здесь произошла пакетная запись в БД
 
     """
     При использовании Django ORM в Python - скрипте или через оболочку shell,
@@ -140,21 +140,11 @@ if __name__ == "__main__":
     """
     for data in data_author_profile:
         author = Author.objects.get(name=data["author"])
-        if data["avatar"] is not None:  # Из-за того, что avatar имеет значение
-            # по умолчанию, то None не считается пустым для обработчика, поэтому
-            # приходится разделять на 2 случая, с и без параметра avatar. Значение
-            # по умолчанию подставляется когда параметр не передан, а NULL подставляется
-            # (если в модели определили null=True) если был передан None
-            obj = AuthorProfile(author=author,
-                                bio=data["bio"],
-                                avatar=data["avatar"],
-                                phone_number=data["phone_number"],
-                                city=data["city"])
-        else:
-            obj = AuthorProfile(author=author,
-                                bio=data["bio"],
-                                phone_number=data["phone_number"],
-                                city=data["city"])
+        # Создаём автора с иконкой по умолчанию
+        obj = AuthorProfile(author=author,
+                            bio=data["bio"],
+                            phone_number=data["phone_number"],
+                            city=data["city"])
 
         check = check_obj_for_write_to_db(obj)
 
@@ -162,10 +152,12 @@ if __name__ == "__main__":
         необходимо вызвать save от этого поля, это немного отличается от ранее
         рассмотренной валидации, так как тут рассматривается конкретное поле со своей спецификой
         """
-        if check and data["avatar"] is not None:  # Если ошибок нет, то запускаем протокол сохранения картинки
-            with open(data["avatar"], 'rb') as file:
-                image_file = File(file)
-                obj.avatar.save(os.path.basename(data["avatar"]), image_file)
+        if check and data["avatar"] is not None:  # Если ошибок нет, и картинку нужно поменять (так как есть путь до
+            # картинки), то запускаем протокол сохранения картинки
+            with open(data["avatar"], 'rb') as file:  # Считываем картинку
+                image_file = File(file)  # Создаём объект File
+                obj.avatar.save(os.path.basename(data["avatar"]), image_file)  # Сохраняем картинку
+                # (запускается механизм переноса картинки в хранилище)
 
     ## ______ Работа с объектами таблицы Entry __________
     blogs = Blog.objects.all()
@@ -187,5 +179,5 @@ if __name__ == "__main__":
                     rating=entry["rating"] if entry["rating"] is not None else 0.0)
 
         check_obj_for_write_to_db(obj)
-        obj.authors.set(author)  # Запись отнощение многое ко многому немного специфичная
+        obj.authors.set(author)  # Запись отношение многое ко многому немного специфичная
         # необходимо сначала сохранить в БД, а затем установить значения отношений
