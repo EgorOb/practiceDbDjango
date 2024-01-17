@@ -37,7 +37,8 @@ if __name__ == "__main__":
 
     # ______Работа с объектами таблицы Blog__________
     """Пример записи в БД с последующим сохранением"""
-    obj = Blog(name=data_blog[0]["name"], tagline=data_blog[0]["tagline"])
+    obj = Blog(name=data_blog[0]["name"], slug_name=data_blog[0]["slug_name"],
+               headline=data_blog[0]["headline"], description=data_blog[0]["description"])
     obj.save()
 
     """Пример записи в БД с сохранением (в нашем случае, так как работаем с словарём,

@@ -16,8 +16,23 @@ class Blog(models.Model):
     name - название блога
     tagline - используется для хранения краткого описания или слогана блога
     """
-    name = models.CharField(max_length=100, unique=True, verbose_name="Название")
-    tagline = models.TextField(verbose_name="Слоган")
+    name = models.CharField(max_length=100,
+                            unique=True,
+                            verbose_name="Название блога",
+                            help_text="Название блога уникальное. Ограничение 100 знаков")
+
+    slug_name = models.SlugField(unique=True,
+                                 verbose_name="Slug поле названия",
+                                 help_text="Название написанное транслитом, для человекочитаемости. Название уникальное.")
+
+    headline = models.TextField(max_length=255,
+                                verbose_name="Короткий слоган",
+                                null=True, blank=True,
+                                help_text="Ограничение 255 символов.")
+
+    description = models.TextField(null=True, blank=True,
+                                   verbose_name="Описание блога",
+                                   help_text="О чем этот блог? Для кого он, в чем его ценность?")
 
     def __str__(self):
         return self.name
@@ -25,6 +40,9 @@ class Blog(models.Model):
     class Meta:
         verbose_name = "Блог"
         verbose_name_plural = "Блоги"
+        unique_together = (
+            'name', 'slug_name'
+        )  # Условие на то, что поля 'name' и 'slug_name' должны создавать уникальную группу
 
 
 class Author(models.Model):
