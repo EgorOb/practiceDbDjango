@@ -147,7 +147,9 @@ class Entry(models.Model):
         Одна запись блога (Entry) может быть связана с одним конкретным блогом (Blog),
         но блог (Blog) может иметь множество связанных записей блога (Entry))
     headline - заголовок
-    body_text - текст статьи
+    slug_headline - заголовок в транслите
+    summary - краткое описание статьи
+    body_text - полный текст статьи
     pub_date - дата и время публикации записи
     mod_date - дата редактирования записи
     authors - авторы написавшие данную статью (отношение "многие ко многим"
@@ -158,8 +160,10 @@ class Entry(models.Model):
         связанных с определенной записью блога (Entry)
     rating - оценка статьи
     """
-    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name="entryes")  # related_name позволяет создать обратную связь
     headline = models.CharField(max_length=255)
+    slug_headline = models.SlugField(primary_key=True, max_length=255)
+    summary = models.TextField()
     body_text = models.TextField()
     pub_date = models.DateTimeField(default=datetime.now)
     mod_date = models.DateField(auto_now=True)
@@ -170,3 +174,6 @@ class Entry(models.Model):
 
     def __str__(self):
         return self.headline
+
+    class Meta:
+        unique_together = ('blog', 'headline', 'slug_headline')

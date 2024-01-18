@@ -173,6 +173,8 @@ if __name__ == "__main__":
         pub_date = timezone.make_aware(pub_date)  # добавляем данных о часовом поясе, так как могут быть проблемы с БД и Django
         obj = Entry(blog=blog,
                     headline=entry["headline"],
+                    slug_headline=entry["slug_headline"],
+                    summary=entry["summary"],
                     body_text=entry["body_text"],
                     pub_date=pub_date,
                     number_of_comments=entry["number_of_comments"],

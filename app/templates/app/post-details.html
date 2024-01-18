@@ -41,8 +41,8 @@
                       <img src="{% static 'app/assets/images/blog-post-02.jpg' %}" alt="">
                     </div>
                     <div class="down-content">
-                      <span>Lifestyle</span>
-                      <a href="post-details.html"><h4>Aenean pulvinar gravida sem nec</h4></a>
+                      <span>{{ entry.blog.name }}</span>
+                      <a href="post-details.html"><h4>{{ entry.headline }}</h4></a>
                       <ul class="post-info">
                         <li><a href="#">Admin</a></li>
                         <li><a href="#">May 12, 2020</a></li>

@@ -262,6 +262,18 @@ header .navbar {
 	font-family: 'FontAwesome';
 }
 
+/* Стиль для заголовка Актуальное */
+.actual-content {
+    padding: 130px 0 20px 0;
+    text-align: center;
+}
+
+.actual-title {
+    color: #f48840; /* Цвет текста */
+    font-weight: 900; /* Жирность шрифта */
+    font-size: 24px; /* Размер шрифта */
+    margin-bottom: 10px; /* Отступ снизу */
+}
 
 
 /* Banner Style */
@@ -270,7 +282,7 @@ header .navbar {
 	margin-bottom: -24px;
 }
 .owl-banner {
-	padding-top: 110px;
+	padding-top: 10px;
 }
 
 .owl-banner .item {
@@ -700,7 +712,7 @@ ul.page-numbers li a:hover {
 	height: 50px;
 	border: 1px solid #eee;
 	font-size: 13px;
-	text-transform: uppercase;
+	/*text-transform: uppercase;*/
 	font-weight: 500;
 	color: #7a7a7a;
 	outline: none;
