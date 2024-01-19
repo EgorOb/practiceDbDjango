@@ -47,10 +47,12 @@
 {#                      <span>Lifestyle</span>#}
                       <a href="{% url 'app:post-detail' post.slug_headline %}"><h4>{{ post.headline }}</h4></a>
                       <ul class="post-info">
-                        {% for author in post.authors.all %}
-                          <li><a href="#">{{ author.name }}</a></li>
-                            {% endfor %}
-                        <li><a href="#">{{ post.pub_date }}</a></li>
+                        <li>
+                          {% for author in entry.authors.all %}
+                            <a href="#">{{ author.name }}</a>{% if not forloop.last %}<a>, </a>{% endif %}
+                          {% endfor %}
+                        </li>
+                        <li><a href="#">{{ post.pub_date|date:"d M Y, H:i"  }}</a></li>
                         <li><a href="#">{{ post.number_of_comments }} Комментариев</a></li>
                       </ul>
                       <p>{{ post.summary }}</p>
@@ -99,9 +101,9 @@
                     <div class="content">
                       <ul>
                         {% for post in resent_posts %}
-                          <li><a href="post-details.html">
+                          <li><a href="{% url 'app:post-detail' post.slug_headline %}">
                           <h5>{{ post.headline }}</h5>
-                          <span>{{ post.pub_date }}</span>
+                          <span>{{ post.pub_date|date:"d M Y, H:i"  }}</span>
                         </a></li>
                           {% endfor %}
                       </ul>
@@ -111,7 +113,7 @@
                 <div class="col-lg-12">
                   <div class="sidebar-item categories">
                     <div class="sidebar-heading">
-                      <h2>Категории</h2>
+                      <h2>Другие блоги</h2>
                     </div>
                     <div class="content">
                       <ul>
@@ -125,7 +127,7 @@
                   <div class="col-lg-12">
                   <div class="sidebar-item tags">
                     <div class="sidebar-heading">
-                      <h2>Связанные теги</h2>
+                      <h2>Теги блога</h2>
                     </div>
                     <div class="content">
                       <ul>

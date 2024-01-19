@@ -413,6 +413,10 @@ header .navbar {
 	margin-top: 100px;
 }
 
+.blog-post-blog {
+	margin-top: 150px;
+}
+
 .blog-posts .blog-post {
 	margin-bottom: 30px;
 }
@@ -690,6 +694,10 @@ ul.page-numbers li a:hover {
 
 .sidebar .sidebar-item {
 	margin-top: 50px;
+}
+
+.sidebar .search .post {
+	margin-top: 150px;
 }
 
 .sidebar .search {

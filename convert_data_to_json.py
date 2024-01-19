@@ -4,31 +4,31 @@
 
 data_blog = [
     {"name": "Путешествия по миру",
-     "slug_name": "Puteshestviya-po-miru",
+     "slug_name": "puteshestviya-po-miru",
      "headline": "Откройте новые горизонты и погрузитесь в удивительные "
                  "приключения вместе с нами!",
      "description": None,
      },
     {"name": "Кулинарные искушения",
-     "slug_name": "Kulinarnye-iskusheniya",
+     "slug_name": "kulinarnye-iskusheniya",
      "headline": "Раскройте вкусовые грани и наслаждайтесь миром кулинарии "
                  "вместе с нами!",
      "description": None,
      },
     {"name": "Фитнес и здоровый образ жизни",
-     "slug_name": "Fitnes-i-zdorovyj-obraz-zhizni",
+     "slug_name": "fitnes-i-zdorovyj-obraz-zhizni",
      "headline": "Позаботьтесь о своем здоровье, достигните физической формы "
                  "и ощутите преимущества активного образа жизни!",
      "description": None,
      },
     {"name": "ИТ-новости и технологии",
-     "slug_name": "It-novosti-i-tekhnologii",
+     "slug_name": "it-novosti-i-tekhnologii",
      "headline": "Будьте в курсе последних новостей, трендов и инноваций "
                  "в мире информационных технологий!",
      "description": None,
      },
     {"name": "Мода и стиль",
-     "slug_name": "Moda-i-stil",
+     "slug_name": "moda-i-stil",
      "headline": "Выражайте свою индивидуальность, следите за модными "
                  "тенденциями и создавайте неповторимые образы вместе с нами!",
      "description": None,
@@ -224,7 +224,7 @@ data_author_profile = [
 data_entry = [
     {"blog": "Путешествия по миру",
      "headline": "Изучение красот Мачу-Пикчу",
-     "slug_headline": "Izuchenie-krasot-Machu-Pikchu",
+     "slug_headline": "izuchenie-krasot-machu-pikchu",
      "summary": """Древний город Мачу-Пикчу, скрытый среди гор Анд, привлекает 
 путешественников со всего мира своей уникальной красотой и загадочностью. 
 Изучение этого археологического чуда предлагает нам уникальную возможность 
@@ -242,7 +242,7 @@ data_entry = [
      },
     {"blog": "Путешествия по миру",
      "headline": "Приключения в Амазонке",
-     "slug_headline": "Priklyucheniya-v-Amazonke",
+     "slug_headline": "priklyucheniya-v-amazonke",
      "summary": """Амазонка - это не просто река, это целый мир приключений 
 и загадок. Встреча с дикой природой Амазонки позволит вам увидеть 
 уникальную биоразнообразие и ощутить мощь естественной силы. Прогулка на 
@@ -259,7 +259,7 @@ data_entry = [
      },
     {"blog": "Путешествия по миру",
      "headline": "Знакомство с Парижем",
-     "slug_headline": "Znakomstvo-s-Parizhem",
+     "slug_headline": "znakomstvo-s-parizhem",
      "summary": """Париж - город любви, искусства и изысканности. 
 Знакомство с Парижем - это погружение в его узкие улочки, исторические 
 достопримечательности и культурную сцену. Прогулка по набережной Сены, 
@@ -277,7 +277,7 @@ data_entry = [
      },
     {"blog": "Путешествия по миру",
      "headline": "Открывая тайны Колизея",
-     "slug_headline": "Otkryvaya-tajny-Kolizeya",
+     "slug_headline": "otkryvaya-tajny-Kolizeya",
      "summary": """Колизей - величественная арена, свидетель исторических 
 сражений и развлечений древнего Рима. Откройте для себя его тайны и 
 узнайте больше о жизни в античной Римской империи. Исследуйте 
@@ -295,7 +295,7 @@ data_entry = [
      },
     {"blog": "Путешествия по миру",
      "headline": "Оазисы Сахары: красота и опасность",
-     "slug_headline": "Oazisy-Sahary-krasota-i-opasnost",
+     "slug_headline": "oazisy-Sahary-krasota-i-opasnost",
      "summary": """Сахара - самая большая пустыня на планете, и в ее сердце 
 скрыты удивительные оазисы. Погрузитесь в суровую красоту Сахары и 
 откройте для себя места, где жизнь пробивает себе путь сквозь песчаные 
@@ -313,7 +313,7 @@ data_entry = [
      },
     {"blog": "Кулинарные искушения",
      "headline": "Рецепты блюд из итальянской кухни",
-     "slug_headline": "Recepty-blyud-iz-italyanskoj-kuhni",
+     "slug_headline": "recepty-blyud-iz-italyanskoj-kuhni",
      "summary": """Итальянская кухня славится своим богатством вкусов и 
 разнообразием блюд. В этой статье мы поделимся с вами несколькими 
 классическими рецептами, которые позволят вам окунуться в мир 
@@ -331,7 +331,7 @@ data_entry = [
      },
     {"blog": "Кулинарные искушения",
      "headline": "Приготовление собственного хлеба",
-     "slug_headline": "Prigotovlenie-sobstvennogo-hleba",
+     "slug_headline": "prigotovlenie-sobstvennogo-hleba",
      "summary": """Аромат свежеиспеченного хлеба заполняет дом и создает 
 уютную атмосферу. В этой статье мы расскажем вам о процессе 
 приготовления хлеба в домашних условиях. Вы узнаете, как подготовить 
@@ -348,7 +348,7 @@ data_entry = [
      },
     {"blog": "Кулинарные искушения",
      "headline": "Экзотические специи и их использование",
-     "slug_headline": "Ekzoticheskie-specii-i-ih-ispolzovanie",
+     "slug_headline": "ekzoticheskie-specii-i-ih-ispolzovanie",
      "summary": """Экзотические специи добавляют в блюда особый вкус и 
 аромат. В этой статье мы представим вам несколько интересных 
 экзотических специй и расскажем, как их использовать в кулинарии. 
@@ -365,7 +365,7 @@ data_entry = [
      },
     {"blog": "Кулинарные искушения",
      "headline": "Десерты для настоящих сладкоежек",
-     "slug_headline": "Deserty-dlya-nastoyashchih-sladkoezhek",
+     "slug_headline": "deserty-dlya-nastoyashchih-sladkoezhek",
      "summary": """Нет ничего лучше, чем насладиться вкусным десертом после 
 обеда или вечернего ужина. В этой статье мы представим вам несколько 
 рецептов десертов, которые понравятся настоящим сладкоежкам. Вы узнаете, 
@@ -383,7 +383,7 @@ data_entry = [
      },
     {"blog": "Кулинарные искушения",
      "headline": "Гастрономическое путешествие по Франции",
-     "slug_headline": "Gastronomicheskoe-puteshestvie-po-Francii",
+     "slug_headline": "gastronomicheskoe-puteshestvie-po-francii",
      "summary": """Франция - страна, известная своей утонченной кухней и 
 богатством гастрономического наследия. В этой статье мы предлагаем вам 
 отправиться в увлекательное гастрономическое путешествие по Франции. Вы 
@@ -402,7 +402,7 @@ data_entry = [
      },
     {"blog": "Фитнес и здоровый образ жизни",
      "headline": "Упражнения для поддержания физической формы",
-     "slug_headline": "Uprazhneniya-dlya-podderzhaniya-fizicheskoj-formy",
+     "slug_headline": "uprazhneniya-dlya-podderzhaniya-fizicheskoj-formy",
      "summary": """В этой статье мы представим вам набор упражнений, 
 которые помогут поддерживать вашу физическую форму. Вы узнаете о 
 различных видах тренировок, включая кардио, силовые упражнения и 
@@ -418,7 +418,7 @@ data_entry = [
      },
     {"blog": "Фитнес и здоровый образ жизни",
      "headline": "Здоровое питание: полезные рецепты",
-     "slug_headline": "Zdorovoe-pitanie-poleznye-recepty",
+     "slug_headline": "zdorovoe-pitanie-poleznye-recepty",
      "summary": """В этой статье вы найдете полезные рецепты, которые 
 помогут вам поддерживать здоровое питание. Мы поделимся с вами идеями 
 для здоровых завтраков, обедов и ужинов, а также вкусными и полезными 
@@ -433,7 +433,7 @@ data_entry = [
      },
     {"blog": "Фитнес и здоровый образ жизни",
      "headline": "Топ-10 фитнес-тренеров для вдохновения",
-     "slug_headline": "Top-10-fitnes-trenerov-dlya-vdohnoveniya",
+     "slug_headline": "top-10-fitnes-trenerov-dlya-vdohnoveniya",
      "summary": """В этой статье мы представим вам десять вдохновляющих 
 фитнес-тренеров, которые помогут вам достичь ваших фитнес-целей. Мы 
 расскажем вам о их достижениях, тренировочных программах и философии 
@@ -448,7 +448,7 @@ data_entry = [
      },
     {"blog": "Фитнес и здоровый образ жизни",
      "headline": "Как правильно заниматься йогой",
-     "slug_headline": "Kak-pravilno-zanimatsya-jogoj",
+     "slug_headline": "kak-pravilno-zanimatsya-jogoj",
      "summary": """В этой статье мы расскажем вам о правильном подходе к 
 занятиям йогой. Вы узнаете о различных стилях йоги, основных асанах и 
 дыхательных упражнениях. Мы также поделимся с вами советами по созданию 
@@ -463,7 +463,7 @@ data_entry = [
      },
     {"blog": "Фитнес и здоровый образ жизни",
      "headline": "Секреты успешного похудения",
-     "slug_headline": "Sekrety-uspeshnogo-pohudeniya",
+     "slug_headline": "sekrety-uspeshnogo-pohudeniya",
      "summary": """В этой статье мы раскроем перед вами секреты успешного 
 похудения. Вы узнаете о правильном подходе к питанию, регулярной 
 физической активности и психологической поддержке. Мы поделимся с вами 
@@ -478,7 +478,7 @@ data_entry = [
      },
     {"blog": "ИТ-новости и технологии",
      "headline": "Последние тренды в мире искусственного интеллекта",
-     "slug_headline": "Poslednie-trendy-v-mire-iskusstvennogo-intellekta",
+     "slug_headline": "poslednie-trendy-v-mire-iskusstvennogo-intellekta",
      "summary": """В этой статье мы расскажем о последних трендах в мире 
 искусственного интеллекта. Вы узнаете о новейших разработках, применении 
 искусственного интеллекта в различных областях, таких как медицина, 
@@ -494,7 +494,7 @@ data_entry = [
      },
     {"blog": "ИТ-новости и технологии",
      "headline": "Развитие интернета вещей: будущее или реальность?",
-     "slug_headline": "Razvitie-interneta-veshchej-budushchee-ili-realnost",
+     "slug_headline": "razvitie-interneta-veshchej-budushchee-ili-realnost",
      "summary": """В этой статье мы рассмотрим развитие интернета вещей и 
 выясним, насколько это будущее уже стало реальностью. Вы узнаете о 
 принципах работы интернета вещей, его преимуществах и вызовах. Мы также 
@@ -510,7 +510,7 @@ data_entry = [
      },
     {"blog": "ИТ-новости и технологии",
      "headline": "Новые гаджеты и устройства: обзор рынка",
-     "slug_headline": "Novye-gadzhety-i-ustrojstva-obzor-rynka",
+     "slug_headline": "novye-gadzhety-i-ustrojstva-obzor-rynka",
      "summary": """В этой статье мы представим вам обзор рынка новых 
 гаджетов и устройств. Вы узнаете о самых актуальных технологических 
 новинках, таких как смартфоны, ноутбуки, планшеты, умные часы и другие 
@@ -526,7 +526,7 @@ data_entry = [
      },
     {"blog": "ИТ-новости и технологии",
      "headline": "Кибербезопасность: защита вашей конфиденциальности",
-     "slug_headline": "Kiberbezopasnost-zashchita-vashej-konfidencialnosti",
+     "slug_headline": "kiberbezopasnost-zashchita-vashej-konfidencialnosti",
      "summary": """В этой статье мы обсудим вопросы кибербезопасности и 
 защиты вашей конфиденциальности в цифровом мире. Вы узнаете о 
 распространенных угрозах, с которыми сталкиваются пользователи, 
@@ -542,7 +542,7 @@ data_entry = [
      },
     {"blog": "ИТ-новости и технологии",
      "headline": "Инновации в области виртуальной реальности",
-     "slug_headline": "Innovacii-v-oblasti-virtualnoj-realnosti",
+     "slug_headline": "innovacii-v-oblasti-virtualnoj-realnosti",
      "summary": """В этой статье мы расскажем о последних инновациях в 
 области виртуальной реальности. Вы узнаете о новейших разработках, 
 использующих виртуальную и дополненную реальность, и о том, как эти 
@@ -558,7 +558,7 @@ data_entry = [
      },
     {"blog": "Мода и стиль",
      "headline": "Тенденции моды на текущий сезон",
-     "slug_headline": "Tendencii-mody-na-tekushchij-sezon",
+     "slug_headline": "tendencii-mody-na-tekushchij-sezon",
      "summary": """В этой статье мы расскажем о главных тенденциях моды на 
 текущий сезон. Вы узнаете о модных цветах, принтах, фасонах и 
 аксессуарах, которые будут актуальны в этом сезоне. Мы также предложим 
@@ -573,7 +573,7 @@ data_entry = [
      },
     {"blog": "Мода и стиль",
      "headline": "Как создать стильный образ на каждый день",
-     "slug_headline": "Kak-sozdat-stilnyj-obraz-na-kazhdyj-den",
+     "slug_headline": "kak-sozdat-stilnyj-obraz-na-kazhdyj-den",
      "summary": """В этой статье мы поделимся с вами секретами создания 
 стильного образа на каждый день. Вы узнаете о базовых элементах 
 гардероба, которые помогут вам выглядеть модно и уверенно в любой 
@@ -589,7 +589,7 @@ data_entry = [
      },
     {"blog": "Мода и стиль",
      "headline": "История моды: от ретро до современности",
-     "slug_headline": "Istoriya-mody-ot-retro-do-sovremennosti",
+     "slug_headline": "istoriya-mody-ot-retro-do-sovremennosti",
      "summary": """В этой статье мы проведем вас через историю моды, 
 начиная от ретро стиля до современных тенденций. Вы узнаете о модных 
 эпохах, значимых дизайнерах и их влиянии на моду. Мы расскажем о 
@@ -605,7 +605,7 @@ data_entry = [
      },
     {"blog": "Мода и стиль",
      "headline": "Уход за кожей и волосами: лучшие советы",
-     "slug_headline": "Uhod-za-kozhej-i-volosami-luchshie-sovety",
+     "slug_headline": "uhod-za-kozhej-i-volosami-luchshie-sovety",
      "summary": """В этой статье мы поделимся с вами лучшими советами по 
 уходу за кожей и волосами. Вы узнаете о правильном выборе косметики, 
 ежедневном уходе, сезонных рекомендациях и основных принципах ухода за 
@@ -621,7 +621,7 @@ data_entry = [
      },
     {"blog": "Мода и стиль",
      "headline": "Интервью с известными модельерами и дизайнерами",
-     "slug_headline": "Intervyu-s-izvestnymi-modelerami-i-dizajnerami",
+     "slug_headline": "intervyu-s-izvestnymi-modelerami-i-dizajnerami",
      "summary": """В этой статье мы представим вам интервью с известными 
 модельерами и дизайнерами. Вы узнаете о их вдохновении, творческом 
 процессе и философии моды. Мы зададим им вопросы о ключевых трендах, 

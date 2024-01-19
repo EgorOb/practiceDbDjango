@@ -61,6 +61,9 @@ https://templatemo.com/tm-551-stand-blog
                 <a class="nav-link" href="{% url 'app:about' %}">Об авторе</a>
               </li>
               <li class="nav-item">
+                <a class="nav-link" href="{% url 'app:about-service' %}">О сервисе</a>
+              </li>
+              <li class="nav-item">
                 <a class="nav-link" href="{% url 'app:blog' '1'%}">Статьи</a>
               </li>
               <li class="nav-item">
@@ -120,16 +123,6 @@ https://templatemo.com/tm-551-stand-blog
     <script src="{% static 'app/assets/js/isotope.js' %}"></script>
     <script src="{% static 'app/assets/js/accordions.js' %}"></script>
 
-    <script language = "text/Javascript">
-      cleared[0] = cleared[1] = cleared[2] = 0; //set a cleared flag for each field
-      function clearField(t){                   //declaring the array outside of the
-      if(! cleared[t.id]){                      // function makes it static and global
-          cleared[t.id] = 1;  // you could use true and false, but that's more typing
-          t.value='';         // with more chance of typos
-          t.style.color='#fff';
-          }
-      }
-    </script>
 {% endblock %}
 {% block add_script %}
 

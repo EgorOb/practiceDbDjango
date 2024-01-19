@@ -4,6 +4,7 @@ import hashlib
 import os
 from django.core.validators import RegexValidator
 from PIL import Image
+from django.contrib.auth.models import User
 
 """
 Рассматриваются 4 таблицы условно обобщающие функционал блога
@@ -162,7 +163,7 @@ class Entry(models.Model):
     """
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name="entryes")  # related_name позволяет создать обратную связь
     headline = models.CharField(max_length=255)
-    slug_headline = models.SlugField(primary_key=True, max_length=255)
+    slug_headline = models.SlugField(max_length=255)  # Можно указать primary_key=True, тогда будет идентифицироваться в БД вместо id
     summary = models.TextField()
     body_text = models.TextField()
     pub_date = models.DateTimeField(default=datetime.now)
@@ -171,9 +172,21 @@ class Entry(models.Model):
     number_of_comments = models.IntegerField(default=0)
     number_of_pingbacks = models.IntegerField(default=0)
     rating = models.FloatField(default=0.0)
+    # tag = models.ManyToManyField('Tag')
 
     def __str__(self):
         return self.headline
 
     class Meta:
         unique_together = ('blog', 'headline', 'slug_headline')
+        ordering = ('-pub_date',)  # При выводе запроса проводить сортировку по дате
+
+
+class Tag(models.Model):
+    name = models.CharField(max_length=50, help_text="Ограничение на 50 символов", verbose_name="Имя тега")
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='comment', null=True)
+    entry = models.ForeignKey(Entry, on_delete=models.SET_NULL, related_name='comment', null=True)
+

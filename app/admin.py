@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Blog, Entry, Author, AuthorProfile
+from .models import Blog, Entry, Author, AuthorProfile, Tag, Comment
 from django.apps import apps
 
 app = apps.get_app_config('app')
@@ -9,3 +9,5 @@ admin.site.register(Blog)
 admin.site.register(Entry)
 admin.site.register(Author)
 admin.site.register(AuthorProfile)
+admin.site.register(Tag)
+admin.site.register(Comment)

@@ -9,7 +9,12 @@ class IndexView(View):
         all_entryes = Entry.objects.all().prefetch_related("authors").select_related("blog")  # Получить все записи с
         # предварительно загруженными отношениям по авторам и блогу
         most_entryes = all_entryes.order_by('-number_of_comments')[:5]  # Получить последние 5 статей по числу комментариев
-        return render(request, 'app/index.html', context={"blogs": blogs, "entryes": most_entryes})
+        fresh_entryes = all_entryes[:5]  # Получить последние 5 статей по дате
+
+        return render(request, 'app/index.html', context={"blogs": blogs,
+                                                          "most_entryes": most_entryes,
+                                                          "entryes": all_entryes[:3],
+                                                          "fresh_entryes": fresh_entryes})
 
 
 class BlogView(TemplateView):
@@ -20,8 +25,8 @@ class BlogView(TemplateView):
 
         # Аналог blog = Blog.objects.get(slug_name=kwargs["name"])
         blog = get_object_or_404(Blog, slug_name=kwargs["name"])  # Если в БД не было найдено объекта, то возвращается ошибка 404
-        blogs = Blog.objects.all()
-        resent_posts = blog.entryes.all().order_by("-pub_date")[:3]  # Вывести последние 3 поста
+        blogs = Blog.objects.exclude(id=blog.id)
+        resent_posts = blog.entryes.all()[:3]  # Вывести последние 3 поста
         # Добавление данных блога в контекст под ключом 'blog', 'resent_posts'
         context['blog'] = blog
         context['blogs'] = blogs
@@ -31,13 +36,35 @@ class BlogView(TemplateView):
 
 
 class PostDetailView(DetailView):
-    model = Entry
-    template_name = 'app/post-details.html'
+    model = Entry  # модель, которая будет браться за основу. В шаблоне можно получить данные из названия модели
+    # с маленькой буквы (entry)
+    slug_field = "slug_headline"  # Для идентификации объекта по полю slug передаём название поля slug из БД
+
+    # Если хотим обрабатывать slug параметр (оставить комментарием)
+    # slug_url_kwarg = "slug" - по умолчанию (этот параметр берется из адресной строки)
+    # Если хотим обрабатывать по int параметру (оставить комментарием)
+    # pk_url_kwarg = "pk" - по умолчанию (этот параметр берется из адресной строки)
+
+    template_name = 'app/post_detail.html'  # можно не указывать, но тогда по умолчанию файл должен
+    # называться и лежать здесь `<app_label>/<model_name><template_name_suffix>.html`, (template_name_suffix
+    # это суффикс у шаблона с префиксом по умолчанию '_detail') в нашем случае это будет
+    # `app/entry_detail.html`, тогда template_name можно не прописывать, он сам возьмёт его
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["blog_entryes"] = self.get_queryset().filter(blog=context['entry'].blog).exclude(id=context['entry'].id)
+        context["blogs"] = Blog.objects.values('name', 'slug_name')
+
+        return context
 
 
 class AboutView(TemplateView):
     template_name = 'app/about.html'
 
+
+class AboutServiceView(TemplateView):
+    template_name = 'app/about_service.html'
 
 class LoginView(TemplateView):
     template_name = 'app/login.html'
