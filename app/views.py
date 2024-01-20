@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View, TemplateView, DetailView
-from .models import Blog, Entry
+from .models import Blog, Entry, Tag, Comment
 
 
 class IndexView(View):
@@ -10,11 +10,14 @@ class IndexView(View):
         # предварительно загруженными отношениям по авторам и блогу
         most_entryes = all_entryes.order_by('-number_of_comments')[:5]  # Получить последние 5 статей по числу комментариев
         fresh_entryes = all_entryes[:5]  # Получить последние 5 статей по дате
+        tags = Tag.objects.all()[:10]  # Получить 10 тегов
 
         return render(request, 'app/index.html', context={"blogs": blogs,
                                                           "most_entryes": most_entryes,
                                                           "entryes": all_entryes[:3],
-                                                          "fresh_entryes": fresh_entryes})
+                                                          "fresh_entryes": fresh_entryes,
+                                                          "tags": tags,
+                                                          })
 
 
 class BlogView(TemplateView):
@@ -55,6 +58,7 @@ class PostDetailView(DetailView):
 
         context["blog_entryes"] = self.get_queryset().filter(blog=context['entry'].blog).exclude(id=context['entry'].id)
         context["blogs"] = Blog.objects.values('name', 'slug_name')
+        context["blog_tags"] = Tag.objects.filter(entry__blog=context['entry'].blog).distinct()
 
         return context
 

@@ -35,6 +35,14 @@ class Blog(models.Model):
                                    verbose_name="Описание блога",
                                    help_text="О чем этот блог? Для кого он, в чем его ценность?")
 
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )  # Дата и время создания объекта сущности в базе данных
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )  # Дата и время обновления объекта сущности в базе данных
+
     def __str__(self):
         return self.name
 
@@ -55,6 +63,14 @@ class Author(models.Model):
 
     name = models.CharField(max_length=200, verbose_name="Имя")
     email = models.EmailField(unique=True, verbose_name="Почта")
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )  # Дата и время создания объекта сущности в базе данных
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )  # Дата и время обновления объекта сущности в базе данных
 
     def __str__(self):
         return self.name
@@ -121,6 +137,14 @@ class AuthorProfile(models.Model):
                             help_text="Город проживания",
                             )
 
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )  # Дата и время создания объекта сущности в базе данных
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )  # Дата и время обновления объекта сущности в базе данных
+
     def __str__(self):
         return self.author.name
 
@@ -172,7 +196,7 @@ class Entry(models.Model):
     number_of_comments = models.IntegerField(default=0)
     number_of_pingbacks = models.IntegerField(default=0)
     rating = models.FloatField(default=0.0)
-    # tag = models.ManyToManyField('Tag')
+    tags = models.ManyToManyField('Tag')
 
     def __str__(self):
         return self.headline
@@ -183,10 +207,50 @@ class Entry(models.Model):
 
 
 class Tag(models.Model):
-    name = models.CharField(max_length=50, help_text="Ограничение на 50 символов", verbose_name="Имя тега")
+    name = models.CharField(max_length=50,
+                            help_text="Ограничение на 50 символов",
+                            verbose_name="Имя тега")
+    slug_name = models.SlugField()
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )  # Дата и время создания объекта сущности в базе данных
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )  # Дата и время обновления объекта сущности в базе данных
+
+    def __str__(self):
+        return self.name
 
 
 class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='comment', null=True)
-    entry = models.ForeignKey(Entry, on_delete=models.SET_NULL, related_name='comment', null=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL,
+                             related_name='comments', null=True)
+    entry = models.ForeignKey(Entry, on_delete=models.SET_NULL,
+                              related_name='comments', null=True)
+
+    text = models.TextField()
+
+    parent = models.ForeignKey('self',
+                               on_delete=models.CASCADE,
+                               null=True,
+                               blank=True,
+                               related_name='children',
+                               verbose_name="родительский комментарий",
+                               help_text="Комментарий с которого началась новая ветка",
+                               )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )  # Дата и время создания объекта сущности в базе данных
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )  # Дата и время обновления объекта сущности в базе данных
+
+    def __str__(self):
+        return f"Пользователь: {self.user.username}; " \
+               f"Статья: {self.entry.headline[:30]}; " \
+               f"Текст: {self.text[:30]}"
 

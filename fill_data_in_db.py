@@ -11,31 +11,125 @@ python manage.py shell
 импортировать модели с которыми будете работать и далее выполнять команды с БД.
 """
 
-import django
 import os
-from json import load
-from django.core.exceptions import ValidationError
-from django.core.files import File
+from time import time
 from datetime import date, datetime
 import re
+from json import load, dump
+import asyncio
+
+from django.core.exceptions import ValidationError
+from django.core.files import File
 from django.utils import timezone
+from faker import Faker
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
-django.setup()
+# _____________Для работы с БД в Django через скрипт - этот блок обязателен !___
+from django import setup
+# Блок обязательно должен быть определен до импорта моделей БД
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')  # Передача параметров в окружение
+setup()  # Загрузка настроек Django
+# ______________________________________________________________________________
 
-with open("data/blogs.json", encoding="utf-8") as f:
+from django.contrib.auth.models import User  # Загрузка базового пользователя
+
+# _____________Блок с созданием пользователей___________________________________
+
+fake = Faker("ru")  # Создаём объект для генерации фейковых данных
+Faker.seed(42)  # Фиксируем значение seed, чтобы случайные генерации были воспроизводимы
+
+def create_fake_users(num_users=10, save_data=True):
+    """Создаем несуществующих пользователей и записываем их, чтобы был доступ"""
+    t1 = time()
+    data = []
+    for _ in range(num_users):
+        username = fake.user_name()
+        email = fake.free_email()
+        password = fake.password()
+        User.objects.create_user(username=username, email=email,
+                                 password=password)
+        data.append({"username": username,
+                     "email": email,
+                     "password": password
+                     })
+    print(f"Время выполнения создания {num_users} пользователей через "
+          f"синхронный цикл равно {time() - t1:.4f} c")
+
+    if save_data:
+        with open("users.json", "w", encoding="utf-8") as f:
+            dump(data, f, indent=4)
+
+
+async def async_create_fake_users(num_users=10):
+    """Асинхронно создаем несуществующих пользователей"""
+    t1 = time()
+    data_user, data = [], []
+
+    for _ in range(num_users):
+        username = fake.user_name()
+        email = fake.free_email()
+        password = fake.password()
+        data_user.append(
+            User(username=username, email=email, password=password))
+        data.append({"username": username,
+                     "email": email,
+                     "password": password
+                     })
+    # У объекта БД есть метод save(), а для асинхронного сохранения применяют asave()
+    await asyncio.gather(*[user.asave() for user in data_user])
+    """
+    asyncio.gather - это функция из библиотеки asyncio в Python, которая позволяет вам запускать 
+    несколько корутин (асинхронных функций) параллельно и ожидать их завершения.
+    В функцию передаются объекты (выполняемые функции), которые необходимо запустить асинхронно
+    """
+
+    print(f"Время выполнения создания {num_users} пользователей через "
+          f"асинхронный цикл равно {time() - t1:.4f} c")
+
+    # Запись в файл
+    if os.path.exists("users.json"):
+        with open("users.json", encoding="utf-8") as f:
+            users = load(f)
+        users += data  # Дозаписываем данные к уже имеющимся
+        with open("users.json", "w", encoding="utf-8") as f:
+            dump(users, f, indent=4)
+    else:
+        with open("users.json", "w", encoding="utf-8") as f:
+            dump(data, f, indent=4)
+# ______________________________________________________________________________
+
+# _____________Чтение данных из json для добавления в БД________________________
+with open("data/json_data/blogs.json", encoding="utf-8") as f:
     data_blog = load(f)
-with open("data/authors.json", encoding="utf-8") as f:
+with open("data/json_data/authors.json", encoding="utf-8") as f:
     data_author = load(f)
-with open("data/authors_profile.json", encoding="utf-8") as f:
+with open("data/json_data/authors_profile.json", encoding="utf-8") as f:
     data_author_profile = load(f)
-with open("data/entrys.json", encoding="utf-8") as f:
+with open("data/json_data/entrys.json", encoding="utf-8") as f:
     data_entry = load(f)
+with open("data/json_data/tags.json", encoding="utf-8") as f:
+    data_tag = load(f)
+with open("data/json_data/comments.json", encoding="utf-8") as f:
+    data_comment = load(f)
+# ______________________________________________________________________________
 
 if __name__ == "__main__":
-    from app.models import Blog, Author, AuthorProfile, Entry
+    from app.models import Blog, Author, AuthorProfile, Entry, Tag, Comment
 
-    # ______Работа с объектами таблицы Blog__________
+    # _____________Создание пользователей_______________________________________
+    ## Создание администратора
+    User.objects.create_superuser("admin", password="123")
+    print("Админ создан \n    Логин: admin\n    Пароль: 123")
+
+    create_fake_users(5)  # Работает долго, так как используется цикл и каждый раз создаётся транзакция в БД
+
+    # Используем asyncio.run() для запуска асинхронной функции
+    asyncio.run(async_create_fake_users(25))  # Работает намного быстрее чем
+    # стандартный цикл, так как все транзакции отправляются почти параллельно
+    # и происходит ожидание когда процесс завершится.
+
+    print()  # Просто, чтобы сделать отступ в консоли
+
+    # ______Работа с объектами таблицы Blog_____________________________________
     """Пример записи в БД с последующим сохранением"""
     obj = Blog(name=data_blog[0]["name"], slug_name=data_blog[0]["slug_name"],
                headline=data_blog[0]["headline"], description=data_blog[0]["description"])
@@ -51,7 +145,7 @@ if __name__ == "__main__":
     for data in data_blog[2:]:
         Blog.objects.create(**data)
 
-    # ______Работа с объектами таблицы Author__________
+    # ______Работа с объектами таблицы Author___________________________________
     """Если необходимо записать объекты пакетом, то для этих целей существует bulk_create,
     Однако он записывает данные в БД, если это контейнер подготовленных объектов
     к записи, а не сырые данные."""
@@ -133,7 +227,7 @@ if __name__ == "__main__":
     if len(data_for_write) == len(raw_data):
         Author.objects.bulk_create(data_for_write)
 
-    # ______ Работа с объектами таблицы AuthorProfile __________
+    # ______ Работа с объектами таблицы AuthorProfile __________________________
     """Далее рассмотрим создание объектов с отношениями. Для того чтобы создать
     запись в БД в таблице где есть отношение, то в это поле необходимо передавать
     объект базы данных связанный с необходимым ключом(значением).
@@ -160,13 +254,19 @@ if __name__ == "__main__":
                 obj.avatar.save(os.path.basename(data["avatar"]), image_file)  # Сохраняем картинку
                 # (запускается механизм переноса картинки в хранилище)
 
-    ## ______ Работа с объектами таблицы Entry __________
+    ## ______ Работа с объектами таблицы Tag ___________________________________
+    for tag in data_tag:
+        Tag.objects.create(**tag)
+
+    ## ______ Работа с объектами таблицы Entry _________________________________
     blogs = Blog.objects.all()
     authors = Author.objects.all()
+    tags = Tag.objects.all()
     re_split = re.compile(r'[ :-]')
     for entry in data_entry:
         blog = blogs.get(name=entry["blog"])
         author = authors.filter(name__in=entry["authors"])
+        tag = tags.filter(name__in=entry["tags"])
         # pub_date в моделях объявлен как DateTimeField, поэтому на вход необходимо подавать объект datetime
         pub_date = datetime(*map(int, re_split.split(entry["pub_date"]))) if \
             entry["pub_date"] is not None else datetime.now()
@@ -184,3 +284,12 @@ if __name__ == "__main__":
         check_obj_for_write_to_db(obj)
         obj.authors.set(author)  # Запись отношение многое ко многому немного специфичная
         # необходимо сначала сохранить в БД, а затем установить значения отношений
+        obj.tags.set(tag)
+
+    ## ______ Работа с объектами таблицы Comment _______________________________
+    for comment in data_comment:
+        entry = Entry.objects.get(headline=comment["entry"])
+        user = User.objects.get(id=comment["user_id"])
+        Comment.objects.create(user=user,
+                               entry=entry,
+                               text=comment["text"])

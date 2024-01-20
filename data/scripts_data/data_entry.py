@@ -1,226 +1,3 @@
-"""
-Конвертация данных в json
-"""
-
-data_blog = [
-    {"name": "Путешествия по миру",
-     "slug_name": "puteshestviya-po-miru",
-     "headline": "Откройте новые горизонты и погрузитесь в удивительные "
-                 "приключения вместе с нами!",
-     "description": None,
-     },
-    {"name": "Кулинарные искушения",
-     "slug_name": "kulinarnye-iskusheniya",
-     "headline": "Раскройте вкусовые грани и наслаждайтесь миром кулинарии "
-                 "вместе с нами!",
-     "description": None,
-     },
-    {"name": "Фитнес и здоровый образ жизни",
-     "slug_name": "fitnes-i-zdorovyj-obraz-zhizni",
-     "headline": "Позаботьтесь о своем здоровье, достигните физической формы "
-                 "и ощутите преимущества активного образа жизни!",
-     "description": None,
-     },
-    {"name": "ИТ-новости и технологии",
-     "slug_name": "it-novosti-i-tekhnologii",
-     "headline": "Будьте в курсе последних новостей, трендов и инноваций "
-                 "в мире информационных технологий!",
-     "description": None,
-     },
-    {"name": "Мода и стиль",
-     "slug_name": "moda-i-stil",
-     "headline": "Выражайте свою индивидуальность, следите за модными "
-                 "тенденциями и создавайте неповторимые образы вместе с нами!",
-     "description": None,
-     },
-]
-
-data_author = [
-    {"name": "alexander89",
-     "email": "alexander89@gmail.com",
-     },
-    {"name": "ekaterina_blog",
-     "email": "ekaterina.blog@yahoo.com",
-     },
-    {"name": "maxim_writer",
-     "email": "maxim.writer@hotmail.com",
-     },
-    {"name": "anna_journey",
-     "email": "anna.journey@gmail.com",
-     },
-    {"name": "sergey_reads",
-     "email": "sergey.reads@yahoo.com",
-     },
-    {"name": "olga_creative",
-     "email": "olga.creative@gmail.com",
-     },
-    {"name": "dmitry_thinker",
-     "email": "dmitry.thinker@hotmail.com",
-     },
-    {"name": "natalia_author",
-     "email": "natalia.author@yahoo.com",
-     },
-    {"name": "ivan_wordsmith",
-     "email": "ivan.wordsmith@gmail.com",
-     },
-    {"name": "marina_inspires",
-     "email": "marina.inspires@yahoo.com",
-     },
-    {"name": "vladimir_writer",
-     "email": "vladimir.writer@mail.ru",
-     },
-    {"name": "irina_blogger",
-     "email": "irina.blogger@yandex.ru",
-     },
-    {"name": "andrey_author",
-     "email": "andrey.author@rambler.ru",
-     },
-    {"name": "elena_thoughts",
-     "email": "elena.thoughts@list.ru",
-     },
-    {"name": "alexandra_creative",
-     "email": "alexandra.creative@inbox.ru",
-     },
-    {"name": "nikolay_blog",
-     "email": "nikolay.blog@mail.ru",
-     },
-    {"name": "svetlana_writer",
-     "email": "svetlana.writer@yandex.ru",
-     },
-    {"name": "roman_author",
-     "email": "roman.author@rambler.ru",
-     },
-    {"name": "larisa_thinker",
-     "email": "larisa.thinker@list.ru",
-     },
-    {"name": "dmitriy_creative",
-     "email": "dmitriy.creative@inbox.ru",
-     },
-]
-
-data_author_profile = [
-    {
-        "author": "alexander89",
-        "bio": "Стремлюсь к тому, чтобы делиться своими знаниями и вдохновлять других.",
-        "avatar": "downloaded_avatars/1.jpg",
-        "phone_number": None,
-        "city": "Москва"},
-    {
-        "author": "ekaterina_blog",
-        "bio": "Исследую мир через слова и пишу о том, что меня вдохновляет.",
-        "avatar": None,
-        "phone_number": "+79523842943",
-        "city": "Екатеринбург"},
-    {
-        "author": "maxim_writer",
-        "bio": "В поисках новых историй и приключений. Рад поделиться своими мыслями и идеями.",
-        "avatar": "downloaded_avatars/2.jpg",
-        "phone_number": "+79993854785",
-        "city": "Нижний Новгород"},
-    {
-        "author": "anna_journey",
-        "bio": None,
-        "avatar": None,
-        "phone_number": None,
-        "city": None},
-    {
-        "author": "sergey_reads",
-        "bio": "Люблю погружаться в мир слов и раскрывать их магию через свои произведения.",
-        "avatar": "downloaded_avatars/3.jpg",
-        "phone_number": "+79500535005",
-        "city": "Санкт-Петербург"},
-    {
-        "author": "olga_creative",
-        "bio": "Размышляю о жизни и передаю свои мысли через письменное слово.",
-        "avatar": "downloaded_avatars/4.png",
-        "phone_number": "+79328949823",
-        "city": "Казань"},
-    {
-        "author": "dmitry_thinker",
-        "bio": "Вдохновение находится в малых деталях, и я стараюсь их передать через свои тексты.",
-        "avatar": "downloaded_avatars/5.jpg",
-        "phone_number": "+79853759733",
-        "city": "Самара"},
-    {
-        "author": "natalia_author",
-        "bio": None,
-        "avatar": "downloaded_avatars/4.png",
-        "phone_number": None,
-        "city": None},
-    {
-        "author": "ivan_wordsmith",
-        "bio": "Погружаюсь в разные темы и делюсь своими увлечениями с читателями.",
-        "avatar": "downloaded_avatars/6.jpg",
-        "phone_number": "+79993249574",
-        "city": "Санкт-Петербург"},
-    {
-        "author": "marina_inspires",
-        "bio": "Чувствую, что слова имеют силу изменить мир, поэтому я пишу.",
-        "avatar": None,
-        "phone_number": "+79457344794",
-        "city": "Москва"},
-    {
-        "author": "vladimir_writer",
-        "bio": "Захватываю воображение и вношу каплю вдохновения в каждое свое произведение.",
-        "avatar": None,
-        "phone_number": None,
-        "city": None},
-    {
-        "author": "irina_blogger",
-        "bio": "Мои истории - это отражение моего внутреннего мира и наблюдений о внешнем.",
-        "avatar": "downloaded_avatars/7.jpg",
-        "phone_number": "+79009009090",
-        "city": "Санкт-Петербург"},
-    {
-        "author": "andrey_author",
-        "bio": "Исследую разнообразие жизни и выражаю свои мысли через письменное искусство.",
-        "avatar": "downloaded_avatars/8.jpg",
-        "phone_number": "+79696502575",
-        "city": "Москва"},
-    {
-        "author": "elena_thoughts",
-        "bio": None,
-        "avatar": None,
-        "phone_number": None,
-        "city": "Владивосток"},
-    {
-        "author": "alexandra_creative",
-        "bio": None,
-        "avatar": None,
-        "phone_number": None,
-        "city": None},
-    {
-        "author": "nikolay_blog",
-        "bio": "Пытаюсь поймать красоту мира и передать ее через мои слова.",
-        "avatar": "downloaded_avatars/9.jpg",
-        "phone_number": "+79158765678",
-        "city": "Казань"},
-    {
-        "author": "svetlana_writer",
-        "bio": "Слова - это кисть, которой я создаю картины своих идей и эмоций.",
-        "avatar": None,
-        "phone_number": None,
-        "city": None},
-    {
-        "author": "roman_author",
-        "bio": "Слова - это инструмент, с помощью которого я строю свой мир и делюсь им с другими.",
-        "avatar": None,
-        "phone_number": "+79258659900",
-        "city": "Ростов-на-Дону"},
-    {
-        "author": "larisa_thinker",
-        "bio": None,
-        "avatar": None,
-        "phone_number": None,
-        "city": None},
-    {
-        "author": "dmitriy_creative",
-        "bio": None,
-        "avatar": None,
-        "phone_number": None,
-        "city": "Красноярск"},
-]
-
 data_entry = [
     {"blog": "Путешествия по миру",
      "headline": "Изучение красот Мачу-Пикчу",
@@ -233,12 +10,13 @@ data_entry = [
 подняться на вершину Хуайна Пикчу и насладиться потрясающим видом на 
 древний город. Изучение Мачу-Пикчу - это не только путешествие во времени, 
 но и возможность узнать больше о древних цивилизациях и их наследии.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2022-04-01 21:00:00",
      "authors": ["ivan_wordsmith", "alexander89"],
      "number_of_comments": 2,
      "number_of_pingbacks": 10,
      "rating": None,
+     "tags": ["Путешествие", "Приключение"],
      },
     {"blog": "Путешествия по миру",
      "headline": "Приключения в Амазонке",
@@ -250,12 +28,13 @@ data_entry = [
 животными и птицами - все это ожидает вас в Амазонке. Погрузитесь в 
 зеленый мир самой большой тропической джунгли на Земле и откройте для 
 себя удивительные приключения, которые запомнятся на всю жизнь.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2022-08-01 21:00:00",
      "authors": ["dmitriy_creative"],
      "number_of_comments": 14,
      "number_of_pingbacks": 30,
      "rating": 5,
+     "tags": ["Приключение", "Путешествие"],
      },
     {"blog": "Путешествия по миру",
      "headline": "Знакомство с Парижем",
@@ -268,16 +47,17 @@ data_entry = [
 Парижские кафе, булочные и рестораны предлагают богатство французской 
 кухни и возможность насладиться неповторимой атмосферой этого 
 удивительного города.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2022-06-01 21:00:00",
      "authors": ["anna_journey", "ekaterina_blog", "olga_creative"],
      "number_of_comments": 7,
      "number_of_pingbacks": 5,
      "rating": 4.7,
+     "tags": ["Путешествие"],
      },
     {"blog": "Путешествия по миру",
      "headline": "Открывая тайны Колизея",
-     "slug_headline": "otkryvaya-tajny-Kolizeya",
+     "slug_headline": "otkryvaya-tajny-kolizeya",
      "summary": """Колизей - величественная арена, свидетель исторических 
 сражений и развлечений древнего Рима. Откройте для себя его тайны и 
 узнайте больше о жизни в античной Римской империи. Исследуйте 
@@ -286,16 +66,17 @@ data_entry = [
 сможете увидеть артефакты, связанные с его историей. Путешествие во 
 времени через посещение Колизея откроет перед вами удивительный мир 
 древнего Рима.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2022-09-01 21:00:00",
      "authors": ["marina_inspires", "elena_thoughts"],
      "number_of_comments": 2,
      "number_of_pingbacks": 5,
      "rating": 3.3,
+     "tags": ["Путешествие", "Тайна"],
      },
     {"blog": "Путешествия по миру",
      "headline": "Оазисы Сахары: красота и опасность",
-     "slug_headline": "oazisy-Sahary-krasota-i-opasnost",
+     "slug_headline": "oazisy-sahary-krasota-i-opasnost",
      "summary": """Сахара - самая большая пустыня на планете, и в ее сердце 
 скрыты удивительные оазисы. Погрузитесь в суровую красоту Сахары и 
 откройте для себя места, где жизнь пробивает себе путь сквозь песчаные 
@@ -304,12 +85,13 @@ data_entry = [
 опасность своими экстремальными температурами и отсутствием воды. 
 Познакомьтесь с удивительным миром Сахары и увидьте, как природа 
 адаптируется к таким непростым условиям жизни.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2023-04-01 00:00:00",
      "authors": ["andrey_author", "vladimir_writer", "nikolay_blog"],
      "number_of_comments": 4,
      "number_of_pingbacks": 0,
      "rating": 3.4,
+     "tags": ["Путешествие", "История"],
      },
     {"blog": "Кулинарные искушения",
      "headline": "Рецепты блюд из итальянской кухни",
@@ -322,12 +104,13 @@ data_entry = [
 приготовить итальянские десерты, например, тирамису. Раскройте секреты 
 итальянской кухни и порадуйте себя и своих близких аутентичными и 
 вкусными блюдами.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2023-01-01 00:00:00",
      "authors": ["dmitriy_creative", "roman_author"],
      "number_of_comments": 10,
      "number_of_pingbacks": 0,
      "rating": 3.5,
+     "tags": ["Кулинария"],
      },
     {"blog": "Кулинарные искушения",
      "headline": "Приготовление собственного хлеба",
@@ -339,12 +122,13 @@ data_entry = [
 вами различными рецептами хлеба, от классического французского багета до 
 ароматного кукурузного хлеба. Приготовьте свой собственный хлеб и 
 наслаждайтесь его неповторимым вкусом и ароматом.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2023-08-01 00:00:00",
      "authors": ["alexander89"],
      "number_of_comments": 7,
      "number_of_pingbacks": 7,
      "rating": 2.3,
+     "tags": ["Кулинария"],
      },
     {"blog": "Кулинарные искушения",
      "headline": "Экзотические специи и их использование",
@@ -356,12 +140,13 @@ data_entry = [
 придают блюдам уникальные оттенки. Мы также поделимся с вами рецептами, 
 в которых экзотические специи станут настоящими героями. Откройте новые 
 гастрономические горизонты с помощью экзотических специй.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2022-12-01 00:00:00",
      "authors": ["irina_blogger", "vladimir_writer"],
      "number_of_comments": 2,
      "number_of_pingbacks": 4,
      "rating": 4.2,
+     "tags": ["Кулинария"],
      },
     {"blog": "Кулинарные искушения",
      "headline": "Десерты для настоящих сладкоежек",
@@ -374,12 +159,13 @@ data_entry = [
 чтобы они выглядели так же аппетитно, как и вкусны. Разбудите свою 
 сладкую сторону и порадуйте себя и своих близких великолепными 
 десертами.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2023-12-01 00:00:00",
      "authors": ["irina_blogger"],
      "number_of_comments": 4,
      "number_of_pingbacks": 9,
      "rating": 4.9,
+     "tags": ["Кулинария"],
      },
     {"blog": "Кулинарные искушения",
      "headline": "Гастрономическое путешествие по Франции",
@@ -393,12 +179,13 @@ data_entry = [
 подборки местных вин, которые отлично сочетаются с блюдами. Погрузитесь 
 во французскую гастрономию и насладитесь великолепными вкусами и 
 ароматами.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2023-01-01 00:00:00",
      "authors": ["ivan_wordsmith", "vladimir_writer"],
      "number_of_comments": 5,
      "number_of_pingbacks": 5,
      "rating": 4.8,
+     "tags": ["Кулинария", "Путешествие"],
      },
     {"blog": "Фитнес и здоровый образ жизни",
      "headline": "Упражнения для поддержания физической формы",
@@ -409,12 +196,13 @@ data_entry = [
 гибкость. Мы также поделимся с вами советами по правильной технике 
 выполнения упражнений и расскажем о преимуществах регулярных 
 тренировок.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2023-10-01 00:00:00",
      "authors": ["ivan_wordsmith"],
      "number_of_comments": 2,
      "number_of_pingbacks": 3,
      "rating": 5,
+     "tags": ["Фитнес", "Советы"],
      },
     {"blog": "Фитнес и здоровый образ жизни",
      "headline": "Здоровое питание: полезные рецепты",
@@ -424,12 +212,13 @@ data_entry = [
 для здоровых завтраков, обедов и ужинов, а также вкусными и полезными 
 перекусами. Вы узнаете о важности баланса питательных веществ и получите 
 рекомендации по выбору качественных продуктов.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2023-05-01 00:00:00",
      "authors": ["irina_blogger"],
      "number_of_comments": 7,
      "number_of_pingbacks": 20,
      "rating": 3.9,
+     "tags": ["Здоровье", "Советы"],
      },
     {"blog": "Фитнес и здоровый образ жизни",
      "headline": "Топ-10 фитнес-тренеров для вдохновения",
@@ -439,12 +228,13 @@ data_entry = [
 расскажем вам о их достижениях, тренировочных программах и философии 
 здорового образа жизни. Вы сможете найти тренера, который соответствует 
 вашим потребностям и станет вашим источником мотивации.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2024-01-01 00:00:00",
      "authors": ["elena_thoughts"],
      "number_of_comments": 1,
      "number_of_pingbacks": 4,
      "rating": 2.9,
+     "tags": ["Фитнес"],
      },
     {"blog": "Фитнес и здоровый образ жизни",
      "headline": "Как правильно заниматься йогой",
@@ -454,12 +244,13 @@ data_entry = [
 дыхательных упражнениях. Мы также поделимся с вами советами по созданию 
 комфортной атмосферы для практики йоги и о том, как получить 
 максимальную пользу от этой древней практики.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2024-04-01 06:00:00",
      "authors": ["dmitriy_creative", "alexander89"],
      "number_of_comments": 0,
      "number_of_pingbacks": 0,
      "rating": 4.1,
+     "tags": ["Фитнес"],
      },
     {"blog": "Фитнес и здоровый образ жизни",
      "headline": "Секреты успешного похудения",
@@ -469,12 +260,13 @@ data_entry = [
 физической активности и психологической поддержке. Мы поделимся с вами 
 стратегиями управления весом, методами измерения прогресса и советами по 
 поддержанию мотивации в течение всего процесса похудения.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2023-04-01 06:00:00",
      "authors": ["maxim_writer"],
      "number_of_comments": 5,
      "number_of_pingbacks": 4,
      "rating": 4.2,
+     "tags": ["Здоровье", "Советы"],
      },
     {"blog": "ИТ-новости и технологии",
      "headline": "Последние тренды в мире искусственного интеллекта",
@@ -485,12 +277,13 @@ data_entry = [
 транспорт, финансы и многое другое. Мы также обсудим перспективы и 
 вызовы, с которыми сталкиваются исследователи и разработчики в этой 
 инновационной сфере.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2024-04-01 06:00:00",
      "authors": ["sergey_reads", "irina_blogger"],
      "number_of_comments": 0,
      "number_of_pingbacks": 0,
      "rating": 4.7,
+     "tags": ["Тренды", "Технологии"],
      },
     {"blog": "ИТ-новости и технологии",
      "headline": "Развитие интернета вещей: будущее или реальность?",
@@ -501,12 +294,13 @@ data_entry = [
 рассмотрим конкретные примеры применения интернета вещей в различных 
 сферах, таких как умный дом, здравоохранение, промышленность и 
 транспорт.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2022-02-01 06:00:00",
      "authors": ["irina_blogger"],
      "number_of_comments": 8,
      "number_of_pingbacks": 8,
      "rating": 4.4,
+     "tags": ["Новости", "Развитие"],
      },
     {"blog": "ИТ-новости и технологии",
      "headline": "Новые гаджеты и устройства: обзор рынка",
@@ -517,12 +311,13 @@ data_entry = [
 устройства. Мы расскажем о их особенностях, возможностях и тенденциях 
 развития. Эта статья поможет вам быть в курсе последних технологических 
 достижений и сделать информированный выбор при покупке нового гаджета.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2021-06-01 06:00:00",
      "authors": ["andrey_author"],
      "number_of_comments": 20,
      "number_of_pingbacks": 1,
      "rating": 3.5,
+     "tags": ["Гаджеты", "Технологии"],
      },
     {"blog": "ИТ-новости и технологии",
      "headline": "Кибербезопасность: защита вашей конфиденциальности",
@@ -533,12 +328,13 @@ data_entry = [
 и о методах защиты от киберпреступников. Мы поделимся с вами советами по 
 созданию надежных паролей, использованию антивирусных программ, защите 
 своих персональных данных и осознанному поведению в онлайн-среде.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2021-09-01 06:00:00",
      "authors": ["alexander89"],
      "number_of_comments": 12,
      "number_of_pingbacks": 6,
      "rating": 3.8,
+     "tags": ["Технологии", "Безопасность", "Советы"],
      },
     {"blog": "ИТ-новости и технологии",
      "headline": "Инновации в области виртуальной реальности",
@@ -549,12 +345,13 @@ data_entry = [
 технологии меняют различные отрасли, включая игровую индустрию, 
 образование, медицину и бизнес. Мы также обсудим потенциал и перспективы 
 развития виртуальной реальности и ее влияние на нашу жизнь.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2021-08-01 06:00:00",
      "authors": ["anna_journey"],
      "number_of_comments": 12,
      "number_of_pingbacks": 25,
      "rating": 4.9,
+     "tags": ["Новости", "Технологии"],
      },
     {"blog": "Мода и стиль",
      "headline": "Тенденции моды на текущий сезон",
@@ -564,12 +361,13 @@ data_entry = [
 аксессуарах, которые будут актуальны в этом сезоне. Мы также предложим 
 вам идеи и советы по созданию стильных образов с использованием новых 
 модных трендов. Будьте в тренде и выглядите модно в этом сезоне!""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2022-09-01 06:00:00",
      "authors": ["dmitry_thinker", "natalia_author", "ivan_wordsmith"],
      "number_of_comments": 8,
      "number_of_pingbacks": 20,
      "rating": 5,
+     "tags": ["Мода", "Тренды"],
      },
     {"blog": "Мода и стиль",
      "headline": "Как создать стильный образ на каждый день",
@@ -580,12 +378,13 @@ data_entry = [
 ситуации. Мы предложим вам простые идеи по комбинированию одежды, 
 выбору аксессуаров и созданию гармоничного образа. Будьте стильными 
 каждый день и выражайте свою индивидуальность через моду!""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2024-11-01 12:00:00",
      "authors": ["nikolay_blog", "roman_author"],
      "number_of_comments": 0,
      "number_of_pingbacks": 0,
      "rating": None,
+     "tags": ["Стиль", "Повседневное"],
      },
     {"blog": "Мода и стиль",
      "headline": "История моды: от ретро до современности",
@@ -596,12 +395,13 @@ data_entry = [
 ключевых характеристиках каждой эпохи и источниках вдохновения. 
 Погрузитесь в мир моды и узнайте, как прошлое влияет на современные 
 тенденции.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2023-06-01 12:00:00",
      "authors": ["irina_blogger"],
      "number_of_comments": 2,
      "number_of_pingbacks": 10,
      "rating": None,
+     "tags": ["История", "Мода"],
      },
     {"blog": "Мода и стиль",
      "headline": "Уход за кожей и волосами: лучшие советы",
@@ -612,12 +412,13 @@ data_entry = [
 кожей и волосами. Мы также расскажем о домашних рецептах и натуральных 
 продуктах, которые помогут вам сохранить здоровье и красоту кожи и 
 волос.""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2023-02-01 12:00:00",
      "authors": ["alexander89"],
      "number_of_comments": 0,
      "number_of_pingbacks": 1,
      "rating": None,
+     "tags": ["Советы"],
      },
     {"blog": "Мода и стиль",
      "headline": "Интервью с известными модельерами и дизайнерами",
@@ -627,23 +428,12 @@ data_entry = [
 процессе и философии моды. Мы зададим им вопросы о ключевых трендах, 
 их видении стиля и роли моды в современном обществе. Будьте в курсе 
 мировой моды и получите вдохновение от талантливых дизайнеров!""",
-     "body_text": "Полный текст статьи",
+     "body_text": "<p>Полный текст статьи.</p>",
      "pub_date": "2023-02-01 12:00:00",
      "authors": ["ivan_wordsmith"],
      "number_of_comments": 0,
      "number_of_pingbacks": 2,
      "rating": 4,
+     "tags": ["Мода", "Интервью"],
      },
 ]
-
-if __name__ == "__main__":
-    from json import dump
-
-    with open("data/blogs.json", "w", encoding="utf-8") as f:
-        dump(data_blog, f, ensure_ascii=False, indent=4)
-    with open("data/authors.json", "w", encoding="utf-8") as f:
-        dump(data_author, f, ensure_ascii=False, indent=4)
-    with open("data/authors_profile.json", "w", encoding="utf-8") as f:
-        dump(data_author_profile, f, ensure_ascii=False, indent=4)
-    with open("data/entrys.json", "w", encoding="utf-8") as f:
-        dump(data_entry, f, ensure_ascii=False, indent=4)

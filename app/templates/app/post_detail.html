@@ -52,14 +52,15 @@
                         <li><a href="#">{{ entry.pub_date|date:"d M Y, H:i"}}</a></li>
                         <li><a href="#comments">{{ entry.number_of_comments }} Комментариев</a></li>
                       </ul>
-                      <p>{{ entry.body_text }}</p>
+                      {{ entry.body_text|safe }}
                       <div class="post-options">
                         <div class="row">
                           <div class="col-6">
                             <ul class="post-tags">
                               <li><i class="fa fa-tags"></i></li>
-                              <li><a href="#">Best Templates</a>,</li>
-                              <li><a href="#">TemplateMo</a></li>
+                              {% for tag in entry.tags.all %}
+                              <li><a href="#">{{tag.name}}</a>{% if not forloop.last %},{% endif %}</li>
+                              {% endfor %}
                             </ul>
                           </div>
                           <div class="col-6">
@@ -81,6 +82,7 @@
                     </div>
                     <div class="content">
                       <ul>
+                        {% for comment in entry.comments.all %}
                         <li>
                           <div class="author-thumb">
                             <img src="{% static 'app/assets/images/comment-author-01.jpg' %}" alt="">
@@ -90,24 +92,8 @@
                             <p>Fusce ornare mollis eros. Duis et diam vitae justo fringilla condimentum eu quis leo. Vestibulum id turpis porttitor sapien facilisis scelerisque. Curabitur a nisl eu lacus convallis eleifend posuere id tellus.</p>
                           </div>
                         </li>
-                        <li class="replied">
-                          <div class="author-thumb">
-                            <img src="{% static 'app/assets/images/comment-author-02.jpg' %}" alt="">
-                          </div>
-                          <div class="right-content">
-                            <h4>Thirteen Man<span>May 20, 2020</span></h4>
-                            <p>In porta urna sed venenatis sollicitudin. Praesent urna sem, pulvinar vel mattis eget.</p>
-                          </div>
-                        </li>
-                        <li>
-                          <div class="author-thumb">
-                            <img src="{% static 'app/assets/images/comment-author-03.jpg' %}" alt="">
-                          </div>
-                          <div class="right-content">
-                            <h4>Belisimo Mama<span>May 16, 2020</span></h4>
-                            <p>Nullam nec pharetra nibh. Cras tortor nulla, faucibus id tincidunt in, ultrices eget ligula. Sed vitae suscipit ligula. Vestibulum id turpis volutpat, lobortis turpis ac, molestie nibh.</p>
-                          </div>
-                        </li>
+                        {% endfor %}
+
                         <li class="replied">
                           <div class="author-thumb">
                             <img src="{% static 'app/assets/images/comment-author-02.jpg' %}" alt="">
@@ -124,7 +110,7 @@
                 <div class="col-lg-12">
                   <div class="sidebar-item submit-comment">
                     <div class="sidebar-heading">
-                      <h2>Your comment</h2>
+                      <h2>Оставить комментарий</h2>
                     </div>
                     <div class="content">
                       <form id="comment" action="#" method="post">
@@ -212,13 +198,9 @@
                     </div>
                     <div class="content">
                       <ul>
-                        <li><a href="#">Lifestyle</a></li>
-                        <li><a href="#">Creative</a></li>
-                        <li><a href="#">HTML5</a></li>
-                        <li><a href="#">Inspiration</a></li>
-                        <li><a href="#">Motivation</a></li>
-                        <li><a href="#">PSD</a></li>
-                        <li><a href="#">Responsive</a></li>
+                        {% for tag in blog_tags %}
+                        <li><a href="#">{{ tag.name }}</a></li>
+                        {% endfor %}
                       </ul>
                     </div>
                   </div>
