@@ -83,26 +83,42 @@
                     <div class="content">
                       <ul>
                         {% for comment in entry.comments.all %}
-                        <li>
-                          <div class="author-thumb">
-                            <img src="{% static 'app/assets/images/comment-author-01.jpg' %}" alt="">
-                          </div>
-                          <div class="right-content">
-                            <h4>Charles Kate<span>May 16, 2020</span></h4>
-                            <p>Fusce ornare mollis eros. Duis et diam vitae justo fringilla condimentum eu quis leo. Vestibulum id turpis porttitor sapien facilisis scelerisque. Curabitur a nisl eu lacus convallis eleifend posuere id tellus.</p>
-                          </div>
-                        </li>
+                            {% if not comment.parent %}
+                                <li>
+                                    <div class="author-thumb">
+                                        <img src="{% static 'app/assets/images/comment-author-01.jpg' %}" alt="">
+                                    </div>
+                                    <div class="right-content">
+                                        <h4>{{ comment.user }}<span>{{ comment.created_at|date:"d M Y, H:i" }}</span></h4>
+                                        <p>{{ comment.text }}</p>
+                                    </div>
+                                    <!-- Отображение дочерних комментариев -->
+                                    {% for child in comment.children.all %}
+                                        <li class="replied">
+                                            <div class="author-thumb">
+                                                <img src="{% static 'app/assets/images/comment-author-02.jpg' %}" alt="">
+                                            </div>
+                                            <div class="right-content">
+                                                <h4>{{ child.user }}<span>{{ child.created_at|date:"d M Y, H:i" }}</span></h4>
+                                                <p>{{ child.text }}</p>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </li>
+                            {% endif %}
+                        {% empty %}
+                        <p>Будьте первым, кто оставит комментарий</p>
                         {% endfor %}
 
-                        <li class="replied">
-                          <div class="author-thumb">
-                            <img src="{% static 'app/assets/images/comment-author-02.jpg' %}" alt="">
-                          </div>
-                          <div class="right-content">
-                            <h4>Thirteen Man<span>May 22, 2020</span></h4>
-                            <p>Mauris sit amet justo vulputate, cursus massa congue, vestibulum odio. Aenean elit nunc, gravida in erat sit amet, feugiat viverra leo.</p>
-                          </div>
-                        </li>
+<!--                        <li class="replied">-->
+<!--                          <div class="author-thumb">-->
+<!--                            <img src="{% static 'app/assets/images/comment-author-02.jpg' %}" alt="">-->
+<!--                          </div>-->
+<!--                          <div class="right-content">-->
+<!--                            <h4>Thirteen Man<span>May 22, 2020</span></h4>-->
+<!--                            <p>Mauris sit amet justo vulputate, cursus massa congue, vestibulum odio. Aenean elit nunc, gravida in erat sit amet, feugiat viverra leo.</p>-->
+<!--                          </div>-->
+<!--                        </li>-->
                       </ul>
                     </div>
                   </div>

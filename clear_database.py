@@ -15,6 +15,9 @@ command_migrate = "python manage.py migrate"
 if os.path.exists(DATABASE):
     os.remove(DATABASE)
 
+if os.path.exists("users.json"):
+    os.remove("users.json")
+
 try:
     subprocess.run(command_make, shell=True, check=True)
     subprocess.run(command_migrate, shell=True, check=True)

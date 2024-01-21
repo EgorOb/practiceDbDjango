@@ -16,12 +16,17 @@ from time import time
 from datetime import date, datetime
 import re
 from json import load, dump
-import asyncio
+import asyncio  # Для асинхронных задач
+from asgiref.sync import sync_to_async
 
 from django.core.exceptions import ValidationError
 from django.core.files import File
 from django.utils import timezone
 from faker import Faker
+from create_users import create_fake_users, async_create_fake_users, \
+    create_users_with_threading, create_users_with_multiprocessing, \
+    create_users_with_threadpool
+
 
 # _____________Для работы с БД в Django через скрипт - этот блок обязателен !___
 from django import setup
@@ -31,71 +36,7 @@ setup()  # Загрузка настроек Django
 # ______________________________________________________________________________
 
 from django.contrib.auth.models import User  # Загрузка базового пользователя
-
-# _____________Блок с созданием пользователей___________________________________
-
-fake = Faker("ru")  # Создаём объект для генерации фейковых данных
-Faker.seed(42)  # Фиксируем значение seed, чтобы случайные генерации были воспроизводимы
-
-def create_fake_users(num_users=10, save_data=True):
-    """Создаем несуществующих пользователей и записываем их, чтобы был доступ"""
-    t1 = time()
-    data = []
-    for _ in range(num_users):
-        username = fake.user_name()
-        email = fake.free_email()
-        password = fake.password()
-        User.objects.create_user(username=username, email=email,
-                                 password=password)
-        data.append({"username": username,
-                     "email": email,
-                     "password": password
-                     })
-    print(f"Время выполнения создания {num_users} пользователей через "
-          f"синхронный цикл равно {time() - t1:.4f} c")
-
-    if save_data:
-        with open("users.json", "w", encoding="utf-8") as f:
-            dump(data, f, indent=4)
-
-
-async def async_create_fake_users(num_users=10):
-    """Асинхронно создаем несуществующих пользователей"""
-    t1 = time()
-    data_user, data = [], []
-
-    for _ in range(num_users):
-        username = fake.user_name()
-        email = fake.free_email()
-        password = fake.password()
-        data_user.append(
-            User(username=username, email=email, password=password))
-        data.append({"username": username,
-                     "email": email,
-                     "password": password
-                     })
-    # У объекта БД есть метод save(), а для асинхронного сохранения применяют asave()
-    await asyncio.gather(*[user.asave() for user in data_user])
-    """
-    asyncio.gather - это функция из библиотеки asyncio в Python, которая позволяет вам запускать 
-    несколько корутин (асинхронных функций) параллельно и ожидать их завершения.
-    В функцию передаются объекты (выполняемые функции), которые необходимо запустить асинхронно
-    """
-
-    print(f"Время выполнения создания {num_users} пользователей через "
-          f"асинхронный цикл равно {time() - t1:.4f} c")
-
-    # Запись в файл
-    if os.path.exists("users.json"):
-        with open("users.json", encoding="utf-8") as f:
-            users = load(f)
-        users += data  # Дозаписываем данные к уже имеющимся
-        with open("users.json", "w", encoding="utf-8") as f:
-            dump(users, f, indent=4)
-    else:
-        with open("users.json", "w", encoding="utf-8") as f:
-            dump(data, f, indent=4)
-# ______________________________________________________________________________
+from app.models import Blog, Author, AuthorProfile, Entry, Tag, Comment
 
 # _____________Чтение данных из json для добавления в БД________________________
 with open("data/json_data/blogs.json", encoding="utf-8") as f:
@@ -112,24 +53,66 @@ with open("data/json_data/comments.json", encoding="utf-8") as f:
     data_comment = load(f)
 # ______________________________________________________________________________
 
+## ______ Синхронная и асинхронная работа с объектами таблицы Comment _______________________________
+# @sync_to_async
+def sync_write_comment(data_comment):
+    t_start = time()
+    for comment in data_comment:
+        entry = Entry.objects.get(headline=comment["entry"])
+        user = User.objects.get(id=comment["user_id"])
+        parent_id = comment.get("parent_id")
+        Comment.objects.create(user=user, entry=entry, text=comment["text"],
+                               parent=Comment.objects.get(id=parent_id) if parent_id else None)
+
+    result_time = time() - t_start
+    print(
+        f"Записи в таблицу Comment созданы, всего {len(data_comment)} записей. Время "
+        f"выполнения: {result_time:.4f} c")
+
+async def async_write_comment(data_comment):
+    t_start = time()
+
+    async def create_comment(comment):
+        entry = await Entry.objects.aget(headline=comment["entry"])
+        user = await User.objects.aget(id=comment["user_id"])
+        parent_id = comment.get("parent_id")
+        parent = await Comment.objects.aget(id=parent_id) if parent_id else None
+        comment_obj = Comment(user=user, entry=entry, text=comment["text"], parent=parent)
+        await comment_obj.asave()
+
+    await asyncio.gather(*(create_comment(comment) for comment in data_comment))
+
+    result_time = time() - t_start
+    print(f"Записи в таблицу Comment созданы, всего {len(data_comment)} записей. Время выполнения: {result_time:.4f} c")
+
 if __name__ == "__main__":
-    from app.models import Blog, Author, AuthorProfile, Entry, Tag, Comment
+
 
     # _____________Создание пользователей_______________________________________
-    ## Создание администратора
+    # Создание администратора
     User.objects.create_superuser("admin", password="123")
     print("Админ создан \n    Логин: admin\n    Пароль: 123")
 
-    create_fake_users(5)  # Работает долго, так как используется цикл и каждый раз создаётся транзакция в БД
+    # Работает долго, хеширование пароля занимает много времени
+    create_fake_users(5, True)  # Создание аккаунта для персонала
 
     # Используем asyncio.run() для запуска асинхронной функции
-    asyncio.run(async_create_fake_users(25))  # Работает намного быстрее чем
-    # стандартный цикл, так как все транзакции отправляются почти параллельно
-    # и происходит ожидание когда процесс завершится.
+    asyncio.run(async_create_fake_users(5))  # Работает аналогично по времени как
+    # create_fake_users, так как для ускорения хеширования нужно параллелить
+    # процессы
+
+    create_users_with_threading(10)  # Применение потоков позволило ускорить
+    # обработку хеширования паролей
+
+    create_users_with_threadpool(10)  # А пулл потоков для этой задачи справился похуже
+
+    create_users_with_multiprocessing(10)  # Применение мультипроцессинга,
+    # дало результат хуже, чем с потоками
 
     print()  # Просто, чтобы сделать отступ в консоли
 
     # ______Работа с объектами таблицы Blog_____________________________________
+    t_start = time()
     """Пример записи в БД с последующим сохранением"""
     obj = Blog(name=data_blog[0]["name"], slug_name=data_blog[0]["slug_name"],
                headline=data_blog[0]["headline"], description=data_blog[0]["description"])
@@ -144,6 +127,10 @@ if __name__ == "__main__":
     нагрузку на БД"""
     for data in data_blog[2:]:
         Blog.objects.create(**data)
+
+    result_time = time() - t_start
+    print(f"Записи в таблицу Блог созданы, всего {len(data_blog)} записей. Время "
+          f"выполнения: {result_time:.4f} c")
 
     # ______Работа с объектами таблицы Author___________________________________
     """Если необходимо записать объекты пакетом, то для этих целей существует bulk_create,
@@ -219,6 +206,8 @@ if __name__ == "__main__":
     Ошибка при создании объекта: {'email': ['Enter a valid email address.']}
     Объект: Author(id=None, name='user1', email='user1')"""
 
+    t_start = time()
+
     """Рабочий пример"""
     raw_data = data_author[11:]
     data_for_write = list(
@@ -227,7 +216,14 @@ if __name__ == "__main__":
     if len(data_for_write) == len(raw_data):
         Author.objects.bulk_create(data_for_write)
 
+    result_time = time() - t_start
+    print(
+        f"\nЗаписи в таблицу Author созданы, всего {len(data_author)} записей. Время "
+        f"выполнения: {result_time:.4f} c")
+
     # ______ Работа с объектами таблицы AuthorProfile __________________________
+    t_start = time()
+
     """Далее рассмотрим создание объектов с отношениями. Для того чтобы создать
     запись в БД в таблице где есть отношение, то в это поле необходимо передавать
     объект базы данных связанный с необходимым ключом(значением).
@@ -254,11 +250,25 @@ if __name__ == "__main__":
                 obj.avatar.save(os.path.basename(data["avatar"]), image_file)  # Сохраняем картинку
                 # (запускается механизм переноса картинки в хранилище)
 
+    result_time = time() - t_start
+    print(
+        f"Записи в таблицу AuthorProfile созданы, всего {len(data_author_profile)} записей. Время "
+        f"выполнения: {result_time:.4f} c")
+
     ## ______ Работа с объектами таблицы Tag ___________________________________
+    t_start = time()
+
     for tag in data_tag:
         Tag.objects.create(**tag)
 
+    result_time = time() - t_start
+    print(
+        f"Записи в таблицу Tag созданы, всего {len(data_tag)} записей. Время "
+        f"выполнения: {result_time:.4f} c")
+
     ## ______ Работа с объектами таблицы Entry _________________________________
+    t_start = time()
+
     blogs = Blog.objects.all()
     authors = Author.objects.all()
     tags = Tag.objects.all()
@@ -286,10 +296,11 @@ if __name__ == "__main__":
         # необходимо сначала сохранить в БД, а затем установить значения отношений
         obj.tags.set(tag)
 
+    result_time = time() - t_start
+    print(
+        f"Записи в таблицу Entry созданы, всего {len(data_entry)} записей. Время "
+        f"выполнения: {result_time:.4f} c")
+
     ## ______ Работа с объектами таблицы Comment _______________________________
-    for comment in data_comment:
-        entry = Entry.objects.get(headline=comment["entry"])
-        user = User.objects.get(id=comment["user_id"])
-        Comment.objects.create(user=user,
-                               entry=entry,
-                               text=comment["text"])
+    sync_write_comment(data_comment[:65])
+    asyncio.run(async_write_comment(data_comment[65:]))
