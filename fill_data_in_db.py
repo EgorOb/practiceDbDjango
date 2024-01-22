@@ -53,9 +53,9 @@ with open("data/json_data/comments.json", encoding="utf-8") as f:
     data_comment = load(f)
 # ______________________________________________________________________________
 
-## ______ Синхронная и асинхронная работа с объектами таблицы Comment _______________________________
-# @sync_to_async
+# ______ Синхронная и асинхронная работа с объектами таблицы Comment _______________________________
 def sync_write_comment(data_comment):
+    """Пример синхронной сложной записи в БД"""
     t_start = time()
     for comment in data_comment:
         entry = Entry.objects.get(headline=comment["entry"])
@@ -69,7 +69,14 @@ def sync_write_comment(data_comment):
         f"Записи в таблицу Comment созданы, всего {len(data_comment)} записей. Время "
         f"выполнения: {result_time:.4f} c")
 
+
 async def async_write_comment(data_comment):
+    """Пример асинхронной сложной записи в БД. По настоящему асинхронно будет работать """
+
+    # Разделение на комментарии пользователей и ответы на комментарии
+    data_comment_user = [comment for comment in data_comment if not comment.get("parent_id")]
+    data_comment_answer = [comment for comment in data_comment if comment.get("parent_id")]
+
     t_start = time()
 
     async def create_comment(comment):
@@ -80,18 +87,77 @@ async def async_write_comment(data_comment):
         comment_obj = Comment(user=user, entry=entry, text=comment["text"], parent=parent)
         await comment_obj.asave()
 
-    await asyncio.gather(*(create_comment(comment) for comment in data_comment))
+    await asyncio.gather(*(create_comment(comment) for comment in data_comment_user))
+    await asyncio.gather(*(create_comment(comment) for comment in data_comment_answer))
 
     result_time = time() - t_start
     print(f"Записи в таблицу Comment созданы, всего {len(data_comment)} записей. Время выполнения: {result_time:.4f} c")
 
+"""
+SQLite — это легковесная встраиваемая база данных, которая не предназначена для высокой параллельности или 
+производительности в многопоточных приложениях. Важно понимать несколько ключевых моментов, связанных с 
+SQLite и асинхронностью:
+
+Однопоточность SQLite:
+SQLite по умолчанию работает в сериализуемом режиме, что означает, что в любой момент времени может выполняться 
+только одна операция записи. Поэтому, даже если вы используете асинхронные запросы, они будут ожидать освобождения 
+блокировки базы данных и фактически выполняться последовательно.
+
+Синхронизация Дисковых Операций:
+SQLite выполняет синхронизацию после каждой операции записи, чтобы гарантировать целостность данных, что может 
+приводить к задержкам при частых записях.
+
+Нагрузка на Event Loop:
+Если асинхронные запросы к SQLite не оптимизированы или создается слишком много одновременных запросов, это 
+может привести к чрезмерной нагрузке на event loop, что также снизит производительность.
+
+Ограничения Python GIL:
+Все питоновские асинхронные операции, в конце концов, выполняются в одном потоке из-за GIL (Global Interpreter Lock), 
+который ограничивает выполнение байт-кода Python одним потоком за раз.
+
+Асинхронность vs. Параллелизм:
+Асинхронность улучшает обработку I/O-задержек, но не добавляет параллелизм в операции, которые требуют интенсивной 
+работы процессора или блокировки ресурсов, как в случае с операциями записи в SQLite.
+
+Для приложений, требующих высокой производительности и параллелизма при работе с базой данных, обычно рекомендуется 
+использовать полноценные СУБД, такие как PostgreSQL или MySQL, которые предоставляют многопоточную обработку 
+и лучше подходят для работы в высоконагруженных асинхронных средах.
+"""
+
+
+def get_many_users_sync(id_=1, num=1000):
+    """
+    Пример множественного синхронного получения пользователя
+    """
+    t1 = time()
+    users = [User.objects.get(id=id_) for _ in range(num)]
+    print(f"Время выполнения {num} синхронных запросов на получения пользователя id = {id_}: {time() - t1:.4f} c")
+    return users
+
+
+async def get_users_concurrently(id_=1, num=1000):
+    tasks = [User.objects.aget(id=id_) for _ in range(num)]
+    return await asyncio.gather(*tasks)
+
+
+def get_many_users_async(id_=1, num=1000):
+    t1 = time()
+    users = asyncio.run(get_users_concurrently(id_=id_, num=num))
+    print(f"Время выполнения {num} асинхронных запросов на получения пользователя id = {id_}: {time() - t1:.4f} c")
+    return users
+
+
 if __name__ == "__main__":
-
-
     # _____________Создание пользователей_______________________________________
     # Создание администратора
     User.objects.create_superuser("admin", password="123")
     print("Админ создан \n    Логин: admin\n    Пароль: 123")
+
+    users_sync = get_many_users_sync()
+    print(users_sync)
+    users_async = get_many_users_async()
+    print(users_async)
+
 
     # Работает долго, хеширование пароля занимает много времени
     create_fake_users(5, True)  # Создание аккаунта для персонала
