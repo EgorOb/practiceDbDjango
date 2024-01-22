@@ -54,32 +54,6 @@ class Blog(models.Model):
         )  # Условие на то, что поля 'name' и 'slug_name' должны создавать уникальную группу
 
 
-class Author(models.Model):
-    """
-    Таблица Автор, содержащая в себе
-    name - username автора
-    email - адрес электронной почты автора
-    """
-
-    name = models.CharField(max_length=200, verbose_name="Имя")
-    email = models.EmailField(unique=True, verbose_name="Почта")
-
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )  # Дата и время создания объекта сущности в базе данных
-
-    updated_at = models.DateTimeField(
-        auto_now=True
-    )  # Дата и время обновления объекта сущности в базе данных
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = "Автор"
-        verbose_name_plural = "Авторы"
-
-
 def hashed_upload_path(instance, filename):
     """
     Пример замены имени файла на строку <user_hash> для возможного дальнейшего
@@ -98,28 +72,26 @@ def hashed_upload_path(instance, filename):
     return os.path.join("avatars", new_filename)
 
 
-class AuthorProfile(models.Model):
+class UserProfile(models.Model):
     """
-    Дополнительная информация к профилю, было создано, чтобы показать, как можно
+    Дополнительная информация к профилю пользователя, было создано, чтобы показать, как можно
     расширить какую-то модель за счёт использования отношения
     один к одному(OneToOneField).
-    author - связь с таблицей автор (один к одному(у автора может быть только один профиль,
-    соответственно профиль принадлежит определенному автору))
+    user - связь с таблицей user (один к одному(у пользователя может быть только один профиль,
+    соответственно профиль принадлежит определенному пользователю))
     bio - текст о себе
     avatar - картинка профиля. Стоят задачи(просто, чтобы показать как это можно решить):
         1. При сохранении необходимо переименовать картинку по шаблону user_hash
         2. Необходимо все передаваемые картинки для аватара приводить к размеру 200х200
     phone_number - номер телефона с валидацией при внесении
     """
-    author = models.OneToOneField(Author, on_delete=models.CASCADE)
-    bio = models.TextField(blank=True,
-                           null=True,
-                           help_text="Короткая биография",
-                           )
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="user_profile")
+
     avatar = models.ImageField(upload_to=hashed_upload_path,
                                default='avatars/unnamed.png',
                                null=True,
                                blank=True)
+
     phone_regex = RegexValidator(
         regex=r'^\+79\d{9}$',
         message="Phone number must be entered in the format: '+79123456789'."
@@ -146,7 +118,7 @@ class AuthorProfile(models.Model):
     )  # Дата и время обновления объекта сущности в базе данных
 
     def __str__(self):
-        return self.author.name
+        return self.user.username
 
     def save(self, *args, **kwargs):
         # Вызов родительского save() метода
@@ -163,6 +135,37 @@ class AuthorProfile(models.Model):
 
         # Сохранение картинки с перезаписью
         image.save(self.avatar.path)
+
+class AuthorProfile(models.Model):
+    """
+    Таблица Профиль Автора, содержащая в себе
+    name - username автора
+    email - адрес электронной почты автора
+    """
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE,
+                                related_name="author_profile")
+
+    bio = models.TextField(blank=True,
+                           null=True,
+                           help_text="Короткая биография",
+                           )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )  # Дата и время создания объекта сущности в базе данных
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )  # Дата и время обновления объекта сущности в базе данных
+
+    def __str__(self):
+        return self.user.username
+
+    class Meta:
+        verbose_name = "Профиль автора"
+        verbose_name_plural = "Профили авторов"
+
 
 
 class Entry(models.Model):
@@ -192,7 +195,7 @@ class Entry(models.Model):
     body_text = models.TextField()
     pub_date = models.DateTimeField(default=datetime.now)
     mod_date = models.DateField(auto_now=True)
-    authors = models.ManyToManyField(Author)
+    authors = models.ManyToManyField(AuthorProfile)
     number_of_comments = models.IntegerField(default=0)
     number_of_pingbacks = models.IntegerField(default=0)
     rating = models.FloatField(default=0.0)

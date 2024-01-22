@@ -2,15 +2,15 @@
 Конвертация данных в json
 """
 
-from scripts_data import data_blog, data_author, data_author_profile, \
+from scripts_data import data_blog, data_user_profile, data_author_profile, \
     data_entry, data_tag, data_comment
 
 from json import dump
 
 with open("json_data/blogs.json", "w", encoding="utf-8") as f:
     dump(data_blog, f, ensure_ascii=False, indent=4)
-with open("json_data/authors.json", "w", encoding="utf-8") as f:
-    dump(data_author, f, ensure_ascii=False, indent=4)
+with open("json_data/users_profile.json", "w", encoding="utf-8") as f:
+    dump(data_user_profile, f, ensure_ascii=False, indent=4)
 with open("json_data/authors_profile.json", "w", encoding="utf-8") as f:
     dump(data_author_profile, f, ensure_ascii=False, indent=4)
 with open("json_data/entrys.json", "w", encoding="utf-8") as f:
