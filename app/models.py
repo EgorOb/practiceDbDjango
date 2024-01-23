@@ -66,7 +66,7 @@ def hashed_upload_path(instance, filename):
     _, ext = os.path.splitext(filename)
 
     # Новое имя картинки
-    new_filename = f"{instance.author.name}_{file_hash}{ext}"
+    new_filename = f"{instance.user.username}_{file_hash}{ext}"
 
     # Возвращаем полный путь сохранения
     return os.path.join("avatars", new_filename)
@@ -139,8 +139,8 @@ class UserProfile(models.Model):
 class AuthorProfile(models.Model):
     """
     Таблица Профиль Автора, содержащая в себе
-    name - username автора
-    email - адрес электронной почты автора
+    user - ссылка на пользователя
+    bio - биография
     """
 
     user = models.OneToOneField(User, on_delete=models.CASCADE,

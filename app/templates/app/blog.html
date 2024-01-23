@@ -49,7 +49,7 @@
                       <ul class="post-info">
                         <li>
                           {% for author in entry.authors.all %}
-                            <a href="#">{{ author.name }}</a>{% if not forloop.last %}<a>, </a>{% endif %}
+                            <a href="#">{{ author.user }}</a>{% if not forloop.last %}<a>, </a>{% endif %}
                           {% endfor %}
                         </li>
                         <li><a href="#">{{ post.pub_date|date:"d M Y, H:i"  }}</a></li>
