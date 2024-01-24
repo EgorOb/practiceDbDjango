@@ -1,142 +1,82 @@
 [
     {
-        "author": "alexander89",
-        "bio": "Стремлюсь к тому, чтобы делиться своими знаниями и вдохновлять других.",
-        "avatar": "downloaded_avatars/1.jpg",
-        "phone_number": null,
-        "city": "Москва"
+        "user_id": 7,
+        "bio": "Стремлюсь к тому, чтобы делиться своими знаниями и вдохновлять других."
     },
     {
-        "author": "ekaterina_blog",
-        "bio": "Исследую мир через слова и пишу о том, что меня вдохновляет.",
-        "avatar": null,
-        "phone_number": "+79523842943",
-        "city": "Екатеринбург"
+        "user_id": 8,
+        "bio": "Исследую мир через слова и пишу о том, что меня вдохновляет."
     },
     {
-        "author": "maxim_writer",
-        "bio": "В поисках новых историй и приключений. Рад поделиться своими мыслями и идеями.",
-        "avatar": "downloaded_avatars/2.jpg",
-        "phone_number": "+79993854785",
-        "city": "Нижний Новгород"
+        "user_id": 9,
+        "bio": "В поисках новых историй и приключений. Рад поделиться своими мыслями и идеями."
     },
     {
-        "author": "anna_journey",
-        "bio": null,
-        "avatar": null,
-        "phone_number": null,
-        "city": null
+        "user_id": 10,
+        "bio": null
     },
     {
-        "author": "sergey_reads",
-        "bio": "Люблю погружаться в мир слов и раскрывать их магию через свои произведения.",
-        "avatar": "downloaded_avatars/3.jpg",
-        "phone_number": "+79500535005",
-        "city": "Санкт-Петербург"
+        "user_id": 11,
+        "bio": "Люблю погружаться в мир слов и раскрывать их магию через свои произведения."
     },
     {
-        "author": "olga_creative",
-        "bio": "Размышляю о жизни и передаю свои мысли через письменное слово.",
-        "avatar": "downloaded_avatars/4.png",
-        "phone_number": "+79328949823",
-        "city": "Казань"
+        "user_id": 12,
+        "bio": "Размышляю о жизни и передаю свои мысли через письменное слово."
     },
     {
-        "author": "dmitry_thinker",
-        "bio": "Вдохновение находится в малых деталях, и я стараюсь их передать через свои тексты.",
-        "avatar": "downloaded_avatars/5.jpg",
-        "phone_number": "+79853759733",
-        "city": "Самара"
+        "user_id": 13,
+        "bio": "Вдохновение находится в малых деталях, и я стараюсь их передать через свои тексты."
     },
     {
-        "author": "natalia_author",
-        "bio": null,
-        "avatar": "downloaded_avatars/4.png",
-        "phone_number": null,
-        "city": null
+        "user_id": 14,
+        "bio": null
     },
     {
-        "author": "ivan_wordsmith",
-        "bio": "Погружаюсь в разные темы и делюсь своими увлечениями с читателями.",
-        "avatar": "downloaded_avatars/6.jpg",
-        "phone_number": "+79993249574",
-        "city": "Санкт-Петербург"
+        "user_id": 15,
+        "bio": "Погружаюсь в разные темы и делюсь своими увлечениями с читателями."
     },
     {
-        "author": "marina_inspires",
-        "bio": "Чувствую, что слова имеют силу изменить мир, поэтому я пишу.",
-        "avatar": null,
-        "phone_number": "+79457344794",
-        "city": "Москва"
+        "user_id": 16,
+        "bio": "Чувствую, что слова имеют силу изменить мир, поэтому я пишу."
     },
     {
-        "author": "vladimir_writer",
-        "bio": "Захватываю воображение и вношу каплю вдохновения в каждое свое произведение.",
-        "avatar": null,
-        "phone_number": null,
-        "city": null
+        "user_id": 17,
+        "bio": "Захватываю воображение и вношу каплю вдохновения в каждое свое произведение."
     },
     {
-        "author": "irina_blogger",
-        "bio": "Мои истории - это отражение моего внутреннего мира и наблюдений о внешнем.",
-        "avatar": "downloaded_avatars/7.jpg",
-        "phone_number": "+79009009090",
-        "city": "Санкт-Петербург"
+        "user_id": 18,
+        "bio": "Мои истории - это отражение моего внутреннего мира и наблюдений о внешнем."
     },
     {
-        "author": "andrey_author",
-        "bio": "Исследую разнообразие жизни и выражаю свои мысли через письменное искусство.",
-        "avatar": "downloaded_avatars/8.jpg",
-        "phone_number": "+79696502575",
-        "city": "Москва"
+        "user_id": 19,
+        "bio": "Исследую разнообразие жизни и выражаю свои мысли через письменное искусство."
     },
     {
-        "author": "elena_thoughts",
-        "bio": null,
-        "avatar": null,
-        "phone_number": null,
-        "city": "Владивосток"
+        "user_id": 20,
+        "bio": null
     },
     {
-        "author": "alexandra_creative",
-        "bio": null,
-        "avatar": null,
-        "phone_number": null,
-        "city": null
+        "user_id": 21,
+        "bio": null
     },
     {
-        "author": "nikolay_blog",
-        "bio": "Пытаюсь поймать красоту мира и передать ее через мои слова.",
-        "avatar": "downloaded_avatars/9.jpg",
-        "phone_number": "+79158765678",
-        "city": "Казань"
+        "user_id": 22,
+        "bio": "Пытаюсь поймать красоту мира и передать ее через мои слова."
     },
     {
-        "author": "svetlana_writer",
-        "bio": "Слова - это кисть, которой я создаю картины своих идей и эмоций.",
-        "avatar": null,
-        "phone_number": null,
-        "city": null
+        "user_id": 23,
+        "bio": "Слова - это кисть, которой я создаю картины своих идей и эмоций."
     },
     {
-        "author": "roman_author",
-        "bio": "Слова - это инструмент, с помощью которого я строю свой мир и делюсь им с другими.",
-        "avatar": null,
-        "phone_number": "+79258659900",
-        "city": "Ростов-на-Дону"
+        "user_id": 24,
+        "bio": "Слова - это инструмент, с помощью которого я строю свой мир и делюсь им с другими."
     },
     {
-        "author": "larisa_thinker",
-        "bio": null,
-        "avatar": null,
-        "phone_number": null,
-        "city": null
+        "user_id": 25,
+        "bio": null
     },
     {
-        "author": "dmitriy_creative",
-        "bio": null,
-        "avatar": null,
-        "phone_number": null,
-        "city": "Красноярск"
+        "user_id": 26,
+        "bio": null
     }
 ]

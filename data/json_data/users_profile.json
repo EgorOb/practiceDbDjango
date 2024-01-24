@@ -1,0 +1,206 @@
+[
+    {
+        "user_id": 7,
+        "avatar": "downloaded_avatars/1.jpg",
+        "phone_number": null,
+        "city": "Москва"
+    },
+    {
+        "user_id": 8,
+        "avatar": null,
+        "phone_number": "+79523842943",
+        "city": "Екатеринбург"
+    },
+    {
+        "user_id": 9,
+        "avatar": "downloaded_avatars/2.jpg",
+        "phone_number": "+79993854785",
+        "city": "Нижний Новгород"
+    },
+    {
+        "user_id": 10,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    },
+    {
+        "user_id": 11,
+        "avatar": "downloaded_avatars/3.jpg",
+        "phone_number": "+79500535005",
+        "city": "Санкт-Петербург"
+    },
+    {
+        "user_id": 12,
+        "avatar": "downloaded_avatars/4.png",
+        "phone_number": "+79328949823",
+        "city": "Казань"
+    },
+    {
+        "user_id": 13,
+        "avatar": "downloaded_avatars/5.jpg",
+        "phone_number": "+79853759733",
+        "city": "Самара"
+    },
+    {
+        "user_id": 14,
+        "avatar": "downloaded_avatars/4.png",
+        "phone_number": null,
+        "city": null
+    },
+    {
+        "user_id": 15,
+        "avatar": "downloaded_avatars/6.jpg",
+        "phone_number": "+79993249574",
+        "city": "Санкт-Петербург"
+    },
+    {
+        "user_id": 16,
+        "avatar": null,
+        "phone_number": "+79457344794",
+        "city": "Москва"
+    },
+    {
+        "user_id": 17,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    },
+    {
+        "user_id": 18,
+        "avatar": "downloaded_avatars/7.jpg",
+        "phone_number": "+79009009090",
+        "city": "Санкт-Петербург"
+    },
+    {
+        "user_id": 19,
+        "avatar": "downloaded_avatars/8.jpg",
+        "phone_number": "+79696502575",
+        "city": "Москва"
+    },
+    {
+        "user_id": 20,
+        "avatar": null,
+        "phone_number": null,
+        "city": "Владивосток"
+    },
+    {
+        "user_id": 21,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    },
+    {
+        "user_id": 22,
+        "avatar": "downloaded_avatars/9.jpg",
+        "phone_number": "+79158765678",
+        "city": "Казань"
+    },
+    {
+        "user_id": 23,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    },
+    {
+        "user_id": 24,
+        "avatar": null,
+        "phone_number": "+79258659900",
+        "city": "Ростов-на-Дону"
+    },
+    {
+        "user_id": 25,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    },
+    {
+        "user_id": 26,
+        "avatar": null,
+        "phone_number": null,
+        "city": "Красноярск"
+    },
+    {
+        "user_id": 27,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    },
+    {
+        "user_id": 28,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    },
+    {
+        "user_id": 29,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    },
+    {
+        "user_id": 30,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    },
+    {
+        "user_id": 31,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    },
+    {
+        "user_id": 32,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    },
+    {
+        "user_id": 33,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    },
+    {
+        "user_id": 34,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    },
+    {
+        "user_id": 35,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    },
+    {
+        "user_id": 36,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    },
+    {
+        "user_id": 37,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    },
+    {
+        "user_id": 38,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    },
+    {
+        "user_id": 39,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    },
+    {
+        "user_id": 40,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    }
+]

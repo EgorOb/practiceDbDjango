@@ -36,13 +36,13 @@ setup()  # Загрузка настроек Django
 # ______________________________________________________________________________
 
 from django.contrib.auth.models import User  # Загрузка базового пользователя
-from app.models import Blog, Author, AuthorProfile, Entry, Tag, Comment
+from app.models import Blog, UserProfile, AuthorProfile, Entry, Tag, Comment
 
 # _____________Чтение данных из json для добавления в БД________________________
 with open("data/json_data/blogs.json", encoding="utf-8") as f:
     data_blog = load(f)
-with open("data/json_data/authors.json", encoding="utf-8") as f:
-    data_author = load(f)
+with open("data/json_data/users_profile.json", encoding="utf-8") as f:
+    data_user_profile = load(f)
 with open("data/json_data/authors_profile.json", encoding="utf-8") as f:
     data_author_profile = load(f)
 with open("data/json_data/entrys.json", encoding="utf-8") as f:
@@ -198,61 +198,88 @@ if __name__ == "__main__":
     print(f"Записи в таблицу Блог созданы, всего {len(data_blog)} записей. Время "
           f"выполнения: {result_time:.4f} c")
 
-    # ______Работа с объектами таблицы Author___________________________________
+    # ______Работа с объектами таблицы AuthorProfile___________________________________
     """Если необходимо записать объекты пакетом, то для этих целей существует bulk_create,
     Однако он записывает данные в БД, если это контейнер подготовленных объектов
     к записи, а не сырые данные."""
-    data_for_write = [Author(**data) for data in data_author[:10]] # Здесь
+    data_for_write = [AuthorProfile(user=User.objects.get(id=data["user_id"]),
+                                    bio=data["bio"]) for data in data_author_profile[:10]] # Здесь
     # просто создались объекты, записи в БД не было
-    Author.objects.bulk_create(data_for_write)  # А здесь произошла пакетная запись в БД
+    AuthorProfile.objects.bulk_create(data_for_write)  # А здесь произошла пакетная запись в БД
 
     """
-    При использовании Django ORM в Python - скрипте или через оболочку shell,
-    встроенные проверки полей моделей автоматически не выполняются при сохранении
-    объектов в базу данных. Однако возможно явно вызвать эти проверки и обработать
+    При использовании Django ORM в Python - скрипте или через оболочку shell, 
+    перед любым сохранением (save, create, bulk_create, bulk_update) в БД по 
+    умолчанию Django не проводит проверку валидации! Это сделано по нескольким причинам:
+    
+    * Гибкость и Производительность: Django предоставляет разработчикам гибкость 
+    в управлении когда и как выполняется валидация. Это особенно важно в сценариях, 
+    где требуется высокая производительность, и каждый дополнительный шаг проверки 
+    может существенно замедлить выполнение операций. Например, при массовом 
+    создании или обновлении данных, дополнительные проверки могут сильно 
+    увеличить время выполнения.
+    
+    * Контекст Зависимая Валидация: Не всегда все проверки, определённые на 
+    уровне модели, актуальны. В некоторых ситуациях, в зависимости от контекста, 
+    некоторые проверки могут быть ненужны или даже нежелательны.
+    
+    * Разделение Ответственности: Django следует принципу, что валидация данных - 
+    это отдельная задача от сохранения данных. Это значит, что разработчик 
+    должен ясно понимать, когда и где необходимо проводить валидацию, и делать 
+    это явно. Это помогает предотвратить случайные ошибки и делает код более 
+    читаемым и поддерживаемым.
+    
+    * Валидация на Уровне Формы: Во многих случаях валидация данных в Django 
+    обычно происходит на уровне форм, а не моделей. В контексте веб-приложения, 
+    данные часто проверяются при их вводе через формы, что является первой 
+    линией защиты от невалидных данных.
+    
+    Однако возможно явно вызвать эти проверки и обработать
     возможные исключения, чтобы убедиться, что данные соответствуют заданным
     ограничениям полей для этого у объекта, который создали для записи необходимо
-    вызвать метод full_clean()
+    вызвать метод full_clean(). За счёт доп. проверок общее время записи увеличится. 
 
-    Для более наглядной части создам функцию с проверкой
+    Для более наглядной части создадим функцию с проверкой
     """
-    def check_obj_for_write_to_db(obj, save=True):
+    def check_obj_for_write_to_db(instance, save=True):
         try:
-            obj.full_clean()
+            instance.full_clean()  # Пытаемся провести проверки. Если где либо будет невалидное поле, то вызовется ошибка
         except ValidationError as e:
-            fields = obj._meta.fields  # Получение
+            fields = instance._meta.fields  # Получение
             # всех полей у объекта, необходимо чтобы вывести в трассировке
             # с какими параметрами был объект с ошибками. Выводит без полей с
             # отношениями с другими таблицами
             params = ""
             for field in fields:
                 field_name = field.name
-                field_value = getattr(obj, field_name)
+                field_value = getattr(instance, field_name)
                 params += f"{field_name}={field_value!r}, "
             print(f"Ошибка при создании объекта: {e}\n"
-                  f"Объект: {obj.__class__.__name__}({params[:-2]})")
+                  f"Объект: {instance.__class__.__name__}({params[:-2]})")
         else:
             if save:
-                obj.save()  # Объект успешно создан
+                instance.save()  # Объект успешно создан
             return True
         return False
 
     """Пример одиночной записи с проверкой, в случае удачных проверок - запишется,
     если нет, то появится ошибка, но выполнению кода это не помешает, так как
     был специально написан обработчик исключения в check_obj_for_write_to_db"""
-    obj = Author(**data_author[10])
+    obj = AuthorProfile(user=User.objects.get(id=data_author_profile[10]["user_id"]),
+                        bio=data_author_profile[10]["bio"])
     check_obj_for_write_to_db(obj)
 
     """Пример с ошибкой"""
-    obj = Author(name="user", email="user")
-    check_obj_for_write_to_db(obj)
+    obj = AuthorProfile(user=User.objects.get(id=10))
+    check_obj_for_write_to_db(obj)  #  Пытаемся записать пользователя который уже есть в БД
     """
     В консоль выведется
-    Ошибка при создании объекта: {'email': ['Enter a valid email address.']}
-    Объект: Author(id=None, name='user', email='user')"""
+    Ошибка при создании объекта: {'user': ['Профиль автора with this User already exists.']}
+    Объект: AuthorProfile(id=None, user=<User: valentinbelov>, bio=None, created_at=None, updated_at=None)
+    """
 
     """
-    К сожалению для Author.objects.create(**data_author[10]) не получится провести
+    К сожалению для AuthorProfile.objects.create(**data_author[10]) не получится провести
     встроенные проверки, так как внутри вызывается save() который делает базовые проверки.
 
     Для bulk_create аналогичная ситуация, однако можно провести проверки в момент
@@ -262,32 +289,55 @@ if __name__ == "__main__":
     """
 
     """Пример с ошибкой в блоке"""
-    raw_data = [{"name": "user1", "email": "user1"}] + data_author[11:]
+    raw_data = data_author_profile[11:] + [{"user_id": 10, "bio": "bio"}]
+    # Делаем фильтрацию, чтобы отсеить строки, что не прошли проверку
     data_for_write = list(filter(lambda x: check_obj_for_write_to_db(x, False),
-                                 (Author(**data) for data in raw_data)))
+                                 (AuthorProfile(user=User.objects.get(id=data["user_id"]),
+                                                bio=data["bio"])
+                                  for data in raw_data))
+                          )
+    # Проверяем на целостность, если данные были отсеян, то не записываем целый блок (имитация Атомарности из концепции acid)
     if len(data_for_write) == len(raw_data):
-        Author.objects.bulk_create(data_for_write)
+        AuthorProfile.objects.bulk_create(data_for_write)
     """
     В консоль выведется
     Ошибка при создании объекта: {'email': ['Enter a valid email address.']}
     Объект: Author(id=None, name='user1', email='user1')"""
 
+    """В Django есть проверка атомарности в транзакциях from django.db import transaction"""
+
+    # Пример транзакции. Узнаем сколько сейчас пользователей, затем добавим
+    # пользователя в транзакции и намерно совершим ошибку, чтобы проверить
+    # работоспособность транзакции. Если она работает, то пользователь созданный
+    # ранее не запишется
+
+    # from django.db import transaction
+    # count_users = User.objects.count()
+    # with transaction.atomic():
+    #     User.objects.create_user("test", "test")
+    #     AuthorProfile.objects.create(user=User.objects.get(id=10))
+    #
+    # print("Транзакция сработала") if User.objects.count() == count_users else print("Транзакция не сработала")
+
     t_start = time()
 
     """Рабочий пример"""
-    raw_data = data_author[11:]
+    raw_data = data_author_profile[11:]
     data_for_write = list(
         filter(lambda x: check_obj_for_write_to_db(x, False),
-               (Author(**data) for data in raw_data)))
+               (AuthorProfile(user=User.objects.get(id=data["user_id"]),
+                              bio=data["bio"]) for data in raw_data)
+               ))
+
     if len(data_for_write) == len(raw_data):
-        Author.objects.bulk_create(data_for_write)
+        AuthorProfile.objects.bulk_create(data_for_write)
 
     result_time = time() - t_start
     print(
-        f"\nЗаписи в таблицу Author созданы, всего {len(data_author)} записей. Время "
+        f"\nЗаписи в таблицу AutorProfile созданы, всего {len(data_author_profile)} записей. Время "
         f"выполнения: {result_time:.4f} c")
 
-    # ______ Работа с объектами таблицы AuthorProfile __________________________
+    # ______ Работа с объектами таблицы UserProfile __________________________
     t_start = time()
 
     """Далее рассмотрим создание объектов с отношениями. Для того чтобы создать
@@ -295,13 +345,12 @@ if __name__ == "__main__":
     объект базы данных связанный с необходимым ключом(значением).
 
     """
-    for data in data_author_profile:
-        author = Author.objects.get(name=data["author"])
+    for data in data_user_profile:
+        user = User.objects.get(id=data["user_id"])
         # Создаём автора с иконкой по умолчанию
-        obj = AuthorProfile(author=author,
-                            bio=data["bio"],
-                            phone_number=data["phone_number"],
-                            city=data["city"])
+        obj = UserProfile(user=user,
+                          phone_number=data["phone_number"],
+                          city=data["city"])
 
         check = check_obj_for_write_to_db(obj)
 
@@ -318,7 +367,7 @@ if __name__ == "__main__":
 
     result_time = time() - t_start
     print(
-        f"Записи в таблицу AuthorProfile созданы, всего {len(data_author_profile)} записей. Время "
+        f"Записи в таблицу UserProfile созданы, всего {len(data_user_profile)} записей. Время "
         f"выполнения: {result_time:.4f} c")
 
     ## ______ Работа с объектами таблицы Tag ___________________________________
@@ -336,12 +385,12 @@ if __name__ == "__main__":
     t_start = time()
 
     blogs = Blog.objects.all()
-    authors = Author.objects.all()
+    authors = AuthorProfile.objects.all()
     tags = Tag.objects.all()
     re_split = re.compile(r'[ :-]')
     for entry in data_entry:
         blog = blogs.get(name=entry["blog"])
-        author = authors.filter(name__in=entry["authors"])
+        author = authors.filter(user__id__in=entry["authors_id"])
         tag = tags.filter(name__in=entry["tags"])
         # pub_date в моделях объявлен как DateTimeField, поэтому на вход необходимо подавать объект datetime
         pub_date = datetime(*map(int, re_split.split(entry["pub_date"]))) if \
