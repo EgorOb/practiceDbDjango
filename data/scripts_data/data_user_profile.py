@@ -1,5 +1,10 @@
 data_user_profile = [
     {
+        "user_id": 1,
+        "avatar": None,
+        "phone_number": None,
+        "city": None},
+    {
         "user_id": 7,
         "avatar": "downloaded_avatars/1.jpg",
         "phone_number": None,

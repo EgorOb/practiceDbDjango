@@ -295,6 +295,12 @@ header .navbar {
 	left: 40px;
 }
 
+.owl-banner .item .item-content h4,
+.owl-banner .item .item-content span,
+.owl-banner .item .item-content a{
+	text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
+}
+
 .owl-banner .item .item-content .meta-category span {
 	color: #f48840;
 	font-size: 18px;
@@ -490,10 +496,10 @@ header .navbar {
 }
 
 .blog-posts .down-content p {
-	padding: 25px 0px;
-	margin: 25px 0px;
-	border-top: 1px solid #eee;
-	border-bottom: 1px solid #eee;
+	/*padding: 25px 0px;*/
+	margin: 15px 0px;
+	/*border-top: 1px solid #eee;*/
+	/*border-bottom: 1px solid #eee;*/
 }
 
 .blog-posts .down-content ul.post-share {
@@ -652,7 +658,6 @@ ul.page-numbers li a:hover {
 	height: 46px;
 	border: 1px solid #eee;
 	font-size: 13px;
-	text-transform: uppercase;
 	font-weight: 500;
 	color: #7a7a7a;
 	outline: none;
@@ -709,7 +714,7 @@ ul.page-numbers li a:hover {
 	text-transform: uppercase;
 	font-weight: 900;
 	letter-spacing: 0.5px;
-	color: #20232e;
+	color: #fb9857;
 	border-bottom: 1px solid #eee;
 	padding-bottom: 15px;
 	margin-bottom: 25px;

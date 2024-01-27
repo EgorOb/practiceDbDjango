@@ -14,7 +14,7 @@
         <div class="owl-banner owl-carousel">
             {% for entry in most_entryes %}
           <div class="item">
-            <img src="{% static 'app/assets/images/banner-item-01.jpg' %}" alt="">
+            <img src="{{ entry.image.url }}" alt="">
             <div class="item-content">
               <div class="main-content">
                 <div class="meta-category">
@@ -52,7 +52,7 @@
                   <div class="col-lg-12">
                   <div class="blog-post">
                     <div class="blog-thumb">
-                      <img src="{% static 'app/assets/images/blog-post-01.jpg' %}" alt="">
+                      <img src="{{ entry.image.url }}" alt="">
                     </div>
                     <div class="down-content">
                       <span>{{ entry.blog.name }}</span>
@@ -80,8 +80,8 @@
                           <div class="col-6">
                             <ul class="post-share">
                               <li><i class="fa fa-share-alt"></i></li>
-                              <li><a href="#">Facebook</a>,</li>
-                              <li><a href="#"> Twitter</a></li>
+                              <li><a href="#">Вконтакте</a>, </li>
+                              <li><a href="#">Телеграм</a></li>
                             </ul>
                           </div>
                         </div>
@@ -92,10 +92,16 @@
                   {% endfor %}
               <div class="col-lg-12">
                   <ul class="page-numbers">
-                    <li><a href="#">1</a></li>
-                    <li class="active"><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#"><i class="fa fa-angle-double-right"></i></a></li>
+                      <!--Пагинатор -->
+                      {% if entryes.has_previous %}
+                        <li><a href="?page=1">1</a></li>
+                        <li><a href="?page={{ entryes.previous_page_number }}"><i class="fa fa-angle-double-left"></i></a></li>
+                      {% endif %}
+                      <li class="active"><a>{{ entryes.number }}</a></li>
+                      {% if entryes.has_next %}
+                          <li><a href="?page={{ entryes.next_page_number }}"><i class="fa fa-angle-double-right"></i></a></li>
+                          <li><a href="?page={{ entryes.paginator.num_pages}}">{{ entryes.paginator.num_pages }}</a></li>
+                      {% endif %}
                   </ul>
                 </div>
               </div>

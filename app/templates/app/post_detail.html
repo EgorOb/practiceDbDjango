@@ -38,7 +38,7 @@
                 <div class="col-lg-12">
                   <div class="blog-post-blog">
                     <div class="blog-thumb">
-                      <img src="{% static 'app/assets/images/blog-post-02.jpg' %}" alt="">
+                      <img src="{{ entry.image.url }}" alt="">
                     </div>
                     <div class="down-content">
                       <span>{{ entry.blog.name }}</span>
@@ -66,8 +66,8 @@
                           <div class="col-6">
                             <ul class="post-share">
                               <li><i class="fa fa-share-alt"></i></li>
-                              <li><a href="#">Facebook</a>,</li>
-                              <li><a href="#"> Twitter</a></li>
+                              <li><a href="#">Вконтакте</a>, </li>
+                              <li><a href="#">Телеграм</a></li>
                             </ul>
                           </div>
                         </div>
@@ -80,47 +80,57 @@
                     <div class="sidebar-heading">
                       <h2 id="comments">Комментарии</h2>
                     </div>
+                  <!-- Блок комментариев -->
                     <div class="content">
                       <ul>
                         {% for comment in entry.comments.all %}
                             {% if not comment.parent %}
                                 <li>
                                     <div class="author-thumb">
-                                        <img src="{% static 'app/assets/images/comment-author-01.jpg' %}" alt="">
+                                        <img src="{{ comment.user.user_profile.avatar.url }}" alt="Фото профиля">
                                     </div>
-                                    <div class="right-content">
+                                    <div class="right-content" id="comment-id-{{ comment.id }}">
                                         <h4>{{ comment.user }}<span>{{ comment.created_at|date:"d M Y, H:i" }}</span></h4>
                                         <p>{{ comment.text }}</p>
+                                    <!-- Проверка, что пользователь автор и он числится среди авторов статьи или пользователь часть персонала сайта -->
+                                    <!-- Тогда будет возможность ответить на комментарий -->
+                                         {% if user.author_profile and user.author_profile in entry.authors.all or user.is_staff %}
+                                        <p><a href="#" onclick="showReplyForm({{ comment.id }}); return false;">Ответить</a></p>
+                                         {% endif %}
                                     </div>
-                                    <!-- Отображение дочерних комментариев -->
-                                    {% for child in comment.children.all %}
-                                        <li class="replied">
-                                            <div class="author-thumb">
-                                                <img src="{% static 'app/assets/images/comment-author-02.jpg' %}" alt="">
-                                            </div>
-                                            <div class="right-content">
-                                                <h4>{{ child.user }}<span>{{ child.created_at|date:"d M Y, H:i" }}</span></h4>
-                                                <p>{{ child.text }}</p>
-                                            </div>
-                                        </li>
-                                    {% endfor %}
                                 </li>
+                                <!-- Скрытая форма для ответа -->
+                                <div class="reply-form" id="reply-form-{{ comment.id }}" style="display: none;">
+                                    <form action="{% url 'app:post-detail' entry.slug_headline %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="parent" value="{{ comment.id }}">
+                                        <div class="col-lg-12">
+                                            <textarea name="text" rows="3" placeholder="Введите свой комментарий" required=""></textarea>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <button type="submit" class="main-button">Опубликовать</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- Отображение дочерних комментариев -->
+                                {% for child in comment.children.all %}
+                                    <li class="replied">
+                                        <div class="author-thumb">
+                                            <img src="{{ child.user.user_profile.avatar.url }}" alt="Фото профиля автора">
+                                        </div>
+                                        <div class="right-content">
+                                            <h4>{{ child.user }}<span>{{ child.created_at|date:"d M Y, H:i" }}</span></h4>
+                                            <p>{{ child.text }}</p>
+                                        </div>
+                                    </li>
+                                {% endfor %}
                             {% endif %}
                         {% empty %}
                         <p>Будьте первым, кто оставит комментарий</p>
                         {% endfor %}
-
-<!--                        <li class="replied">-->
-<!--                          <div class="author-thumb">-->
-<!--                            <img src="{% static 'app/assets/images/comment-author-02.jpg' %}" alt="">-->
-<!--                          </div>-->
-<!--                          <div class="right-content">-->
-<!--                            <h4>Thirteen Man<span>May 22, 2020</span></h4>-->
-<!--                            <p>Mauris sit amet justo vulputate, cursus massa congue, vestibulum odio. Aenean elit nunc, gravida in erat sit amet, feugiat viverra leo.</p>-->
-<!--                          </div>-->
-<!--                        </li>-->
                       </ul>
                     </div>
+                  <!-- Конец блока комментариев -->
                   </div>
                 </div>
                 <div class="col-lg-12">
@@ -128,37 +138,31 @@
                     <div class="sidebar-heading">
                       <h2>Оставить комментарий</h2>
                     </div>
-                    <div class="content">
-                      <form id="comment" action="#" method="post">
-                        <div class="row">
-                          <div class="col-md-6 col-sm-12">
-                            <fieldset>
-                              <input name="name" type="text" id="name" placeholder="Your name" required="">
-                            </fieldset>
-                          </div>
-                          <div class="col-md-6 col-sm-12">
-                            <fieldset>
-                              <input name="email" type="text" id="email" placeholder="Your email" required="">
-                            </fieldset>
-                          </div>
-                          <div class="col-md-12 col-sm-12">
-                            <fieldset>
-                              <input name="subject" type="text" id="subject" placeholder="Subject">
-                            </fieldset>
-                          </div>
-                          <div class="col-lg-12">
-                            <fieldset>
-                              <textarea name="message" rows="6" id="message" placeholder="Type your comment" required=""></textarea>
-                            </fieldset>
-                          </div>
-                          <div class="col-lg-12">
-                            <fieldset>
-                              <button type="submit" id="form-submit" class="main-button">Submit</button>
-                            </fieldset>
-                          </div>
+                    {% if user.is_authenticated %}
+                        <div class="content">
+                          <form id="comment" action="{% url 'app:post-detail' entry.slug_headline %}" method="post">
+                            {% csrf_token %}
+                              <div class="row">
+                                  <div class="col-lg-12">
+                                    <fieldset>
+                                      <textarea name="text" rows="6" id="message" placeholder="Введите свой комментарий" required=""></textarea>
+                                    </fieldset>
+                                  </div>
+                                  <div class="col-lg-12">
+                                    <fieldset>
+                                      <button type="submit" id="form-submit" class="main-button">Опубликовать</button>
+                                    </fieldset>
+                                  </div>
+                            </div>
+                          </form>
                         </div>
-                      </form>
-                    </div>
+                    {% else %}
+                         <div class="content">
+                        <div class="col-lg-12">
+                                Чтобы просматривать комментарии <a href="{% url 'app:login' 'signin'%}?next={% url 'app:post-detail' entry.slug_headline %}">авторизируйтесь!</a>
+                        </div>
+                         </div>
+                    {% endif %}
                   </div>
                 </div>
               </div>
@@ -227,4 +231,23 @@
         </div>
       </div>
     </section>
+{% endblock %}
+{% block add_script %}
+<script>
+let currentReplyForm = null;
+
+function showReplyForm(commentId) {
+    // Скрыть текущую открытую форму, если она есть
+    if (currentReplyForm) {
+        currentReplyForm.style.display = 'none';
+    }
+
+    // Найти и показать новую форму
+    let form = document.getElementById('reply-form-' + commentId);
+    if (form) {
+        form.style.display = 'block';
+        currentReplyForm = form;  // Обновляем текущую открытую форму
+    }
+}
+</script>
 {% endblock %}

@@ -1,0 +1,141 @@
+/* Основные стили авторского дашборда */
+.author-dashboard {
+  font-family: 'Roboto', sans-serif;
+  display: flex; /* Изменено для трехколоночного дизайна */
+  /*max-width: 1200px; !* Изменено для большей ширины *!*/
+  margin: 0 auto;
+  padding: 20px;
+  background: #fff;
+  color: #7a7a7a;
+  gap: 20px; /* Добавлено пространство между колонками */
+}
+
+.navigation-panel {
+  width: 10%; /* Ширина левой колонки */
+  /*flex: 1;*/
+}
+
+.main-content {
+  flex: 2; /* Центральная колонка будет расти, занимая доступное пространство */
+  padding: 20px;
+}
+
+.sidebar {
+  width: 25%; /* Ширина правой колонки */
+  flex: 1;
+}
+
+/* Стили для заголовка дашборда */
+.dashboard-header {
+  flex-basis: 100%; /* Заголовок будет на всю ширину */
+  text-align: center;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.dashboard-header h2 {
+  color: #20232e;
+  text-transform: uppercase;
+  font-weight: 900;
+}
+
+.dashboard-section {
+  margin-top: 30px;
+  padding: 20px;
+  border: 1px solid #eee;
+}
+
+.dashboard-section h3 {
+  font-size: 18px;
+  color: #f48840;
+  text-transform: uppercase;
+  font-weight: 900;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+/* Стили для списка статей */
+.articles-list ul,
+.comments-list ul,
+.nav-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.articles-list li,
+.comments-list li,
+.nav-list ul li{
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.articles-list li a,
+.comments-list li a,
+.nav-list ul li a {
+  color: #eee;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 900;
+
+}
+
+.articles-list li a:hover,
+.comments-list li a:hover,
+.nav-list ul li a:hover {
+  color: #f48840;
+}
+
+.articles-list li:last-child,
+.comments-list li:last-child,
+.nav-list ul li:last-child{
+  border-bottom: none;
+}
+
+/* Стили для списка комментариев */
+.comments-list li {
+  color: #20232e;
+  font-size: 14px;
+}
+
+/* Стили для секции создания поста */
+.create-post form {
+  display: flex;
+  flex-direction: column;
+}
+
+.create-post input[type="text"],
+.create-post textarea {
+  font-size: 14px;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #eee;
+}
+
+.create-post button {
+  background-color: #f48840;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.create-post button:hover {
+  background-color: #fb9857;
+}
+
+
+/* Добавление адаптивности для маленьких экранов */
+@media (max-width: 768px) {
+  .author-dashboard {
+    flex-direction: column;
+  }
+
+  .navigation-panel,
+  .main-content,
+  .sidebar {
+    width: 100%; /* Колонки будут занимать всю ширину на маленьких экранах */
+    flex: none; /* Сбрасываем flex-grow на маленьких экранах */
+  }
+}

@@ -40,7 +40,28 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'debug_toolbar',  # для Django Debug Toolbar
     'app',
+    'tinymce',
+    'crispy_forms',
+    "crispy_bootstrap4",
 ]
+
+# для Django Debug Toolbar
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+# Настройки TinyMCE
+TINYMCE_DEFAULT_CONFIG = {
+    'height': 360,
+    'width': 'auto',
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 10,
+    # ... другие настройки TinyMCE
+}
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"  # для crispy_bootstrap4
+
+CRISPY_TEMPLATE_PACK = "bootstrap4"  # для crispy_forms
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -138,8 +159,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Место для хранени
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# для Django Debug Toolbar
-INTERNAL_IPS = [
-    "127.0.0.1",
-]

@@ -18,7 +18,7 @@ let changeForm = (e) => {
 	switchCtn.classList.add("is-gx");
 	setTimeout(function () {
 		switchCtn.classList.remove("is-gx");
-	}, 1500);
+	}, 0);
 
 	switchCtn.classList.toggle("is-txr");
 	switchCircle[0].classList.toggle("is-txr");
@@ -39,3 +39,12 @@ let mainF = (e) => {
 };
 
 window.addEventListener("load", mainF);
+
+// Получаем текущий URL
+let currentURL = window.location.href;
+
+// Проверяем, содержит ли URL нужные части для определения формы
+if (currentURL.includes("/signup/")) {
+	// Меняем форму
+	changeForm();
+}

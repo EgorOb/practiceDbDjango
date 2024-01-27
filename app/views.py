@@ -1,6 +1,13 @@
-from django.shortcuts import render, get_object_or_404
-from django.views.generic import View, TemplateView, DetailView
-from .models import Blog, Entry, Tag, Comment
+from django.shortcuts import render, get_object_or_404, resolve_url, redirect
+from django.views.generic import View, TemplateView, DetailView, CreateView, FormView
+from .models import Blog, Entry, Tag, Comment, AuthorProfile
+from .forms import CommentForm, CustomUserCreationForm, EntryForm
+from django.contrib.auth import login, logout
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.exceptions import PermissionDenied
 
 
 class IndexView(View):
@@ -12,9 +19,22 @@ class IndexView(View):
         fresh_entryes = all_entryes[:5]  # Получить последние 5 статей по дате
         tags = Tag.objects.all()[:10]  # Получить 10 тегов
 
+        # Применение пагинации, для реализации постраничного вывода
+
+        paginator = Paginator(all_entryes, 3)  # Показывать по 3 статей на странице. Можно передать параметр пользователь сам решит сколько ему покажется
+        page = request.GET.get('page')  # по умолчанию передаётся page в параметрах запроса, чтобы понять на какой мы сейчас странице
+        try:
+            entryes = paginator.page(page)
+        except PageNotAnInteger:
+            # Если страница не является целым числом, показать первую страницу.
+            entryes = paginator.page(1)
+        except EmptyPage:
+            # Если страница выходит за пределы допустимого диапазона (например, 9999), показать последнюю страницу результатов.
+            entryes = paginator.page(paginator.num_pages)
+
         return render(request, 'app/index.html', context={"blogs": blogs,
                                                           "most_entryes": most_entryes,
-                                                          "entryes": all_entryes[:3],
+                                                          "entryes": entryes,
                                                           "fresh_entryes": fresh_entryes,
                                                           "tags": tags,
                                                           })
@@ -33,6 +53,7 @@ class BlogView(TemplateView):
         # Добавление данных блога в контекст под ключом 'blog', 'resent_posts'
         context['blog'] = blog
         context['blogs'] = blogs
+        context["blog_tags"] = Tag.objects.filter(entry__blog=blog).distinct()
         context['resent_posts'] = resent_posts
 
         return context
@@ -62,6 +83,59 @@ class PostDetailView(DetailView):
 
         return context
 
+    def post(self, request, *args, **kwargs):
+        form = CommentForm(data=request.POST)
+        if form.is_valid():
+            user = request.user
+            entry = self.get_object()
+            text = form.cleaned_data.get('text')
+            parent = form.cleaned_data.get('parent')
+            Comment.objects.create(user=user, entry=entry, text=text, parent=parent)
+
+        return redirect('app:post-detail', slug=kwargs["slug"])
+
+
+class PersonalAccountView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    template_name = 'app/personal_account.html'
+    login_url = '/login/signin/'
+    permission_denied_message = "Доступ разрешен только со статусом автора"
+    permission_required = 'app.can_add_entry'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        ## Можно явно проверить разрешение
+        # if not self.request.user.has_perm('app.can_add_entry'):
+        #     raise PermissionDenied(self.permission_denied_message)
+        profile_author = get_object_or_404(AuthorProfile, user=self.request.user)  # Проверяем что есть профиль автора
+        entries = profile_author.entrys.all()
+        comments = Comment.objects.filter(entry__in=entries).filter(parent__isnull=True).order_by('-created_at')[:5]
+        context["profile_author"] = profile_author
+        context["entries"] = entries
+        context["comments"] = comments
+        context['entry_form'] = EntryForm()  # Добавляем форму в контекст
+        return context
+
+    def post(self, request, **kwargs):
+        form = EntryForm(request.POST, request.FILES)
+        if form.is_valid():
+            entry = Entry(blog=form.cleaned_data.get("blog"),
+                  headline=form.cleaned_data.get("headline"),
+                  slug_headline=form.cleaned_data.get("slug_headline"),
+                  summary=form.cleaned_data.get("summary"),
+                  body_text=form.cleaned_data.get("body_text"),
+                  image=form.cleaned_data.get("image"),
+                  pub_date=form.cleaned_data.get("pub_date"))
+            profile_author = get_object_or_404(AuthorProfile,
+                                               user=self.request.user)
+            entry.save()
+            entry.authors.add(profile_author)
+            entry.tags.add(*form.cleaned_data.get("tags"))
+
+        return redirect('app:personal-account')
+
+
+
+
+
 
 class AboutView(TemplateView):
     template_name = 'app/about.html'
@@ -70,5 +144,48 @@ class AboutView(TemplateView):
 class AboutServiceView(TemplateView):
     template_name = 'app/about_service.html'
 
+
 class LoginView(TemplateView):
     template_name = 'app/login.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if next_ := self.request.GET.get('next'):
+            context["next"] = next_
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if kwargs["param"] == "signin":
+            form = AuthenticationForm(data=request.POST)
+            if form.is_valid():
+                user = form.get_user()
+                login(request, user)  # Авторизируем пользователя в системе
+                next_ = request.GET.get("next", "/")  # Реализуем перенаправление,
+                # если есть next, то перенаправляем на адрес, иначе на главную страницу
+                return redirect(next_)
+            else:
+                # Обработка ошибок валидации формы
+                return render(request, self.template_name, {"form_signin": form})
+        elif kwargs["param"] == "signup":
+            form = CustomUserCreationForm(data=request.POST)
+            if form.is_valid():
+                username = form.cleaned_data.get('username')
+                email = form.cleaned_data.get('email')
+                password = form.cleaned_data.get('password1')
+                user = User.objects.create_user(username=username, email=email,
+                                                password=password)
+                user.save()
+                if form.data.get('become-author') == 'on':  # Получили данные о нажатом переключателе
+                    AuthorProfile.objects.create(user=user)  # Создали профиль автора для пользователя
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')  # Авторизируем пользователя в системе
+
+                next_ = request.GET.get("next", "/")  # Реализуем перенаправление,
+                # если есть next, то перенаправляем на адрес, иначе на главную страницу
+                return redirect(next_)
+            return render(request, self.template_name, {"form_signup": form})
+
+
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect("/")

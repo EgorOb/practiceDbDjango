@@ -54,21 +54,22 @@ https://templatemo.com/tm-551-stand-blog
           <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'app:index' %}">На главную
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'app:about' %}">Об авторе</a>
-              </li>
-              <li class="nav-item">
                 <a class="nav-link" href="{% url 'app:about-service' %}">О сервисе</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'app:blog' '1'%}">Статьи</a>
+              {% if not user.is_authenticated %}
+                <li class="nav-item">
+                <a class="nav-link" href="{% url 'app:login' 'signin'%}">Авторизироваться</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'app:post-detail' 'example' %}">Подробности статьи</a>
+                {% else %}
+                <li class="nav-item">
+                <a class="nav-link" href="{% url 'app:logout' %}">Выйти</a>
               </li>
+                    <li class="nav-item">
+                <a class="nav-link" href="{% url 'app:personal-account' %}">Личный кабинет</a>
+              </li>
+                    Привет, {{ user.username }}
+              </li>
+                {% endif %}
             </ul>
           </div>
         </div>

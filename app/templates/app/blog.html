@@ -41,7 +41,7 @@
                 <div class="col-lg-6">
                   <div class="blog-post">
                     <div class="blog-thumb">
-                      <img src="{% static 'app/assets/images/blog-thumb-01.jpg' %}" alt="">
+                      <img src="{{ post.image.url }}" alt="">
                     </div>
                     <div class="down-content">
 {#                      <span>Lifestyle</span>#}
@@ -53,7 +53,7 @@
                           {% endfor %}
                         </li>
                         <li><a href="#">{{ post.pub_date|date:"d M Y, H:i"  }}</a></li>
-                        <li><a href="#">{{ post.number_of_comments }} Комментариев</a></li>
+                        <li><a href="{% url 'app:post-detail' post.slug_headline %}#comments">{{ post.number_of_comments }} Комментариев</a></li>
                       </ul>
                       <p>{{ post.summary }}</p>
                       <div class="post-options">
@@ -61,8 +61,9 @@
                           <div class="col-lg-12">
                             <ul class="post-tags">
                               <li><i class="fa fa-tags"></i></li>
-                              <li><a href="#">Best Templates</a>,</li>
-                              <li><a href="#">TemplateMo</a></li>
+                              {% for tag in post.tags.all %}
+                              <li><a href="#">{{ tag.name }}</a>{% if not forloop.last %},{% endif %}</li>
+                              {% endfor %}
                             </ul>
                           </div>
                         </div>
@@ -131,13 +132,9 @@
                     </div>
                     <div class="content">
                       <ul>
-                        <li><a href="#">Lifestyle</a></li>
-                        <li><a href="#">Creative</a></li>
-                        <li><a href="#">HTML5</a></li>
-                        <li><a href="#">Inspiration</a></li>
-                        <li><a href="#">Motivation</a></li>
-                        <li><a href="#">PSD</a></li>
-                        <li><a href="#">Responsive</a></li>
+                        {% for tag in blog_tags %}
+                        <li><a href="#">{{ tag.name }}</a></li>
+                        {% endfor %}
                       </ul>
                     </div>
                   </div>

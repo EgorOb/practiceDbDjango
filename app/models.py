@@ -5,6 +5,8 @@ import os
 from django.core.validators import RegexValidator
 from PIL import Image
 from django.contrib.auth.models import User
+from tinymce.models import HTMLField
+
 
 """
 Рассматриваются 4 таблицы условно обобщающие функционал блога
@@ -136,6 +138,7 @@ class UserProfile(models.Model):
         # Сохранение картинки с перезаписью
         image.save(self.avatar.path)
 
+
 class AuthorProfile(models.Model):
     """
     Таблица Профиль Автора, содержащая в себе
@@ -167,7 +170,6 @@ class AuthorProfile(models.Model):
         verbose_name_plural = "Профили авторов"
 
 
-
 class Entry(models.Model):
     """
     Статья блога
@@ -188,18 +190,30 @@ class Entry(models.Model):
         связанных с определенной записью блога (Entry)
     rating - оценка статьи
     """
-    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name="entryes")  # related_name позволяет создать обратную связь
-    headline = models.CharField(max_length=255)
-    slug_headline = models.SlugField(max_length=255)  # Можно указать primary_key=True, тогда будет идентифицироваться в БД вместо id
-    summary = models.TextField()
-    body_text = models.TextField()
-    pub_date = models.DateTimeField(default=datetime.now)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE,
+                             related_name="entryes",
+                             verbose_name="блог")  # related_name позволяет создать обратную связь
+    headline = models.CharField(max_length=255,
+                                verbose_name="заголовок статьи")
+    slug_headline = models.SlugField(max_length=255,
+                                     verbose_name="slug заголовок")  # Можно указать primary_key=True, тогда будет идентифицироваться в БД вместо id
+    summary = models.TextField(verbose_name="краткое описание")
+    body_text = HTMLField('текст статьи')
+    image = models.ImageField(upload_to='image_entry',
+                              default='image_entry/default.jpg',
+                              null=True,
+                              blank=True,
+                              verbose_name="картинка")
+    pub_date = models.DateTimeField(default=datetime.now,
+                                    verbose_name="дата публикации")
     mod_date = models.DateField(auto_now=True)
-    authors = models.ManyToManyField(AuthorProfile)
+    authors = models.ManyToManyField(AuthorProfile, related_name="entrys",
+                                     verbose_name="авторы",
+                                     help_text="для HTML формы укажите соавторов, если они есть")
     number_of_comments = models.IntegerField(default=0)
     number_of_pingbacks = models.IntegerField(default=0)
     rating = models.FloatField(default=0.0)
-    tags = models.ManyToManyField('Tag')
+    tags = models.ManyToManyField('Tag', verbose_name="теги статьи")
 
     def __str__(self):
         return self.headline
@@ -207,6 +221,13 @@ class Entry(models.Model):
     class Meta:
         unique_together = ('blog', 'headline', 'slug_headline')
         ordering = ('-pub_date',)  # При выводе запроса проводить сортировку по дате
+        permissions = [
+            ("can_view_entry", "Может просматривать статью"),
+            ("can_add_entry", "Может создать статью"),
+            ("can_change_entry", "Может изменять статью"),
+            ("can_delete_entry", "Может удалять статью"),
+        ]
+
 
 
 class Tag(models.Model):
@@ -256,4 +277,3 @@ class Comment(models.Model):
         return f"Пользователь: {self.user.username}; " \
                f"Статья: {self.entry.headline[:30]}; " \
                f"Текст: {self.text[:30]}"
-

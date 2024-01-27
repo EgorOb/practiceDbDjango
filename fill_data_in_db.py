@@ -154,9 +154,9 @@ if __name__ == "__main__":
     print("Админ создан \n    Логин: admin\n    Пароль: 123")
 
     users_sync = get_many_users_sync()
-    print(users_sync)
+    print(users_sync[:10])
     users_async = get_many_users_async()
-    print(users_async)
+    print(users_async[:10])
 
 
     # Работает долго, хеширование пароля занимает много времени
@@ -176,6 +176,35 @@ if __name__ == "__main__":
     # дало результат хуже, чем с потоками
 
     print()  # Просто, чтобы сделать отступ в консоли
+
+    # ______Работа с разрешениями_____________________________________
+
+    from django.contrib.auth.models import Group, Permission
+    from app.models import Entry
+
+    # Получаем группу "Авторы"
+    authors_group, created = Group.objects.get_or_create(name='Авторы')
+
+    # Получаем разрешения, которые определены в модели Entry
+    view_entry_permission = Permission.objects.get(codename='can_view_entry')
+    add_entry_permission = Permission.objects.get(codename='can_add_entry')
+    change_entry_permission = Permission.objects.get(codename='can_change_entry')
+    delete_entry_permission = Permission.objects.get(codename='can_delete_entry')
+
+    # Назначаем разрешения группе "Авторы"
+    authors_group.permissions.add(
+        view_entry_permission,
+        add_entry_permission,
+        change_entry_permission,
+        delete_entry_permission
+    )
+
+    # Применение группы для пользователя
+    for data in data_author_profile:
+        user = User.objects.get(id=data["user_id"])
+        user.groups.add(authors_group)
+
+    print("Разрешения на Авторов созданы")
 
     # ______Работа с объектами таблицы Blog_____________________________________
     t_start = time()
@@ -401,6 +430,7 @@ if __name__ == "__main__":
                     slug_headline=entry["slug_headline"],
                     summary=entry["summary"],
                     body_text=entry["body_text"],
+                    image=entry["image"],
                     pub_date=pub_date,
                     number_of_comments=entry["number_of_comments"],
                     number_of_pingbacks=entry["number_of_pingbacks"],

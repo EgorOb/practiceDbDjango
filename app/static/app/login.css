@@ -257,3 +257,30 @@ body {
     width: 500px;
   }
 }
+
+/* Скроем оригинальный чекбокс */
+.toggle-checkbox {
+  display: none;
+}
+
+/* Стили для контейнера и самого тоггла */
+.toggle-container {
+  display: inline-block;
+  position: relative;
+  margin-top: 10px;
+}
+
+.toggle-label {
+  display: inline-block;
+  background-color: #e1e1e1; /* Цвет фона тоггла в неактивном состоянии */
+  padding: 6px 12px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Стили для активного тоггла */
+.toggle-checkbox:checked + .toggle-label {
+  background-color: #5cb85c; /* Цвет фона тоггла в активном состоянии */
+  color: white; /* Цвет текста в активном состоянии */
+}

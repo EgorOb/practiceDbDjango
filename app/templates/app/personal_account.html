@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Личный кабинет автора</title>
+<link rel="stylesheet" href="{% static 'app/personal.css' %}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+<script src="{% static 'tinymce/tinymce.min.js' %}"></script>
+<script>
+tinymce.init({
+  selector: '#id_content',
+  height: 500, // Высота текстовой области в пикселях
+  language: "ru",
+});
+</script>
+</head>
+<body>
+
+<div class="author-dashboard">
+  <div class="navigation-panel">
+    <div class="dashboard-section nav-list">
+    <h3>Навигация</h3>
+      <ul>
+        <li><a href="/">На главную</a></li>
+        <li>2</li>
+        <li>3</li>
+      </ul>
+  </div>
+  </div>
+
+  <div class="main-content">
+    <div class="dashboard-section create-post">
+      <h3>Создать пост</h3>
+      <form action="." method="post" enctype="multipart/form-data" class="p-3">
+        <!-- Форма для создания нового поста -->
+        {% csrf_token %}
+        <div class="form-group">
+            {{ entry_form.blog|as_crispy_field }}
+        </div>
+        <div class="form-group">
+            {{ entry_form.headline|as_crispy_field }}
+        </div>
+        <div class="form-group">
+            {{ entry_form.slug_headline|as_crispy_field }}
+        </div>
+        <div class="form-group">
+            {{ entry_form.summary|as_crispy_field }}
+        </div>
+          <div class="form-group">
+{#            {{ entry_form.body_text|as_crispy_field }}#}
+            <textarea id="id_content" name="body_text" placeholder="Содержимое поста"></textarea>
+        </div>
+          <div class="form-group">
+            {{ entry_form.pub_date|as_crispy_field }}
+        </div>
+          <div class="form-group">
+            {{ entry_form.authors|as_crispy_field }}
+        </div>
+          <div class="form-group">
+            {{ entry_form.image|as_crispy_field }}
+        </div>
+          <div class="form-group">
+            {{ entry_form.tags|as_crispy_field }}
+        </div>
+
+        <button type="submit">Опубликовать</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="dashboard-section articles-list">
+      <h3>Мои статьи</h3>
+      <ul>
+          {% for entry in entries %}
+        <li><a href="{% url 'app:post-detail' entry.slug_headline %}">{{ entry.headline }}</a></li>
+          {% endfor %}
+      </ul>
+    </div>
+
+    <div class="dashboard-section comments-list">
+      <h3>Новые комментарии на статьях</h3>
+      <ul>
+        {% for comment in comments %}
+        <li><a href="{% url 'app:post-detail' comment.entry.slug_headline %}#comment-id-{{ comment.id }}">{{ comment.text }}</a></li>
+          {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

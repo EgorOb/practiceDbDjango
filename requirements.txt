@@ -3,3 +3,6 @@ Pillow==9.5.0
 django-debug-toolbar==4.2.0
 Faker==21.0.0
 psycopg2==2.9.9
+django-tinymce==3.6.1
+django-crispy-forms==2.1
+crispy-bootstrap4

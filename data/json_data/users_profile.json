@@ -1,5 +1,11 @@
 [
     {
+        "user_id": 1,
+        "avatar": null,
+        "phone_number": null,
+        "city": null
+    },
+    {
         "user_id": 7,
         "avatar": "downloaded_avatars/1.jpg",
         "phone_number": null,
